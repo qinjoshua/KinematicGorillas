@@ -109,6 +109,7 @@ class RenderView {
     renderGorillaBreathing(x, y) {
         var imgBreatheUpGorilla = document.getElementById("bu-img");
         var imgBreatheDownGorilla = document.getElementById("bd-img");
+        var canvas = document.getElementById("viewport");
 
         this.context.fillStyle = "#000000";
         this.context.font = "24px Verdana";
@@ -120,12 +121,12 @@ class RenderView {
         if (this.breatheUp) {
             // this.context.fillStyle = "#000000";
             // this.context.fillRect(x, y, 40, 60);
-            this.context.drawImage(imgBreatheUpGorilla, x, y);
+            this.context.drawImage(imgBreatheUpGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
         }
         else {
             // this.context.fillStyle = "#ffffff";
             // this.context.fillRect(x, y, 40, 60);
-            this.context.drawImage(imgBreatheDownGorilla, x, y);
+            this.context.drawImage(imgBreatheDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
         }
         this.tick = this.tick + 1;
     }
