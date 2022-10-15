@@ -74,7 +74,58 @@ class KinematicGorillaModel {
         this.bananas = [];
     }
 }
- 
+class RenderView {        
+    constructor(context) {
+        this.context = context
+        this.bananaThrow = 1;
+    }
+
+    getRandomColor() {
+        const letters = '0123456789abcdef'.split('');
+        let color = '#';
+      
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.round(Math.random() * 15)];
+        }
+        
+        return color;
+      }
+
+    renderBuilding(x, y, width, height) {
+        var randColor = this.getRandomColor();
+        this.context.fillStyle = randColor;
+        this.context.fillRect(x, y, width, height);
+    }
+
+    renderBanana(x, y) {
+        this.context.fillStyle = "#FFFF00";
+        this.context.fillRect(x, y, 10, 10);
+    }
+
+    renderGorilla(x, y) {
+        this.context.fillStyle = "#000000";
+        this.context.fillRect(x, y, 40, 60);
+    }
+
+    renderGorillaWithBanana(x, y) {
+
+        this.context.fillStyle = "#000000";
+        this.context.font = "24px Verdana";
+        this.context.fillText("Speed: " + this.bananaThrow, 100, 50);
+        this.bananaThrow = this.bananaThrow + 1;
+        console.log(this.bananaThrow)
+        if (x % 2 === 0) {
+            this.context.fillStyle = "#000000";
+            this.context.fillRect(x, y, 40, 60);
+        }
+        else {
+            this.context.fillStyle = "#ffffff";
+            this.context.fillRect(x, y, 40, 60);
+        }
+    
+    }
+}
+
 window.onload = function() {
     // Get the canvas and context
     var canvas = document.getElementById("viewport"); 
@@ -83,8 +134,10 @@ window.onload = function() {
 
     function resize() {
         var container = document.getElementById("viewport-container");
-        gameWidth = container.clientWidth;
-        gameHeight = container.clientHeight;
+        var launchForm = document.getElementById("launch-form");
+        gameWidth = window.innerWidth;
+        gameHeight = document.documentElement.clientHeight - launchForm.clientHeight;
+        console.log(document.documentElement.clientHeight + " " + launchForm.clientHeight + " " + gameHeight);
         canvas.width = gameWidth;
         canvas.height = gameHeight;
     }
@@ -100,12 +153,9 @@ window.onload = function() {
     
     // Initialize the game
     function init() {
-        // Add mouse events
-        canvas.addEventListener("mousemove", onMouseMove);
-        canvas.addEventListener("mousedown", onMouseDown);
-        canvas.addEventListener("mouseup", onMouseUp);
-        canvas.addEventListener("mouseout", onMouseOut);
-    
+        // render initial background here (gorillas and buildings)
+       
+
         // Enter main loop
         main(0);
     }
@@ -175,49 +225,31 @@ window.onload = function() {
         // Draw the frame
         drawFrame();
     }
+
     
-    // Draw a frame with a border
     function drawFrame() {
+        
         // Draw background and a border
         context.fillStyle = "#d0d0d0";
         context.fillRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = "#e8eaec";
+        context.fillStyle = "#0ce6ff";
         context.fillRect(1, 1, canvas.width-2, canvas.height-2);
-        
-        // Draw header
-        context.fillStyle = "#303030";
-        context.fillRect(0, 0, canvas.width, 65);
-        
-        // Draw title
-        context.fillStyle = "#ffffff";
-        context.font = "24px Verdana";
-        context.fillText("HTML5 Canvas Basic Framework - Rembound.com", 10, 30);
         
         // Display fps
         context.fillStyle = "#ffffff";
         context.font = "12px Verdana";
-        context.fillText("Fps: " + fps, 13, 50);
-    }
-    
-    // Mouse event handlers
-    function onMouseMove(e) {}
-    function onMouseDown(e) {}
-    function onMouseUp(e) {}
-    function onMouseOut(e) {}
-    
-    // Get the mouse position
-    function getMousePos(canvas, e) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-            x: Math.round((e.clientX - rect.left)/(rect.right - rect.left)*canvas.width),
-            y: Math.round((e.clientY - rect.top)/(rect.bottom - rect.top)*canvas.height)
-        };
+        context.fillText("Fps: " + fps, 13, 70);
+
+       // var view = new RenderView()
+       // view.renderGorillaWithBanana(99,99)
+       // view.renderBanana(99,99)
+       
     }
     
     // Call init to start the game
     init();
 };
 
-var form = document.getElementById("launchForm");
+var form = document.getElementById("launch-form");
 function handleForm(event) { event.preventDefault(); } 
 form.addEventListener('submit', handleForm);
