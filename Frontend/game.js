@@ -1,8 +1,8 @@
 let GAME_WIDTH = 200;
 let GAME_HEIGHT = 100;
 
-let GORILLA_WIDTH_FACTOR = 0.1;
-let GORILLA_HEIGHT_FACTOR = 0.025;
+let GORILLA_WIDTH_FACTOR = 0.025;
+let GORILLA_HEIGHT_FACTOR = 0.1;
 
 let LEFT_PLAYER_OPEN_POS = [];
 let RIGHT_PLAYER_OPEN_POS = [];
@@ -29,7 +29,7 @@ class Posn{
     }
 
     toString() {
-        return "X: " + this.x + ", Y: " + this.y;
+        return "Posn: X = " + this.getX() + " Y = " + this.getY();
     }
 }
 
@@ -77,10 +77,10 @@ class Building {
     }
 
     containsPoint(pointPosn) {
-        return this.position.getX() > pointPosn.getX() &&
-            this.position.getY() > pointPosn.getY() &&
-            this.position.getX() < pointPosn.getX() + this.width &&
-            this.position.getY() < pointPosn.getY() - this.height;
+        return this.position.getX() >= pointPosn.getX() &&
+            this.position.getY() >= pointPosn.getY() &&
+            this.position.getX() <= pointPosn.getX() + this.width &&
+            this.position.getY() <= pointPosn.getY() - this.height;
     }
 }
 
@@ -103,17 +103,17 @@ class KinematicGorillaModel {
             var x = getRndInteger(2, 4) * 0.05;
             var y = getRndInteger(3, 8) * 0.1;
 
-            let buildingOrigin = new Posn(widthCovered, y * GAME_HEIGHT);
+           let buildingOrigin = new Posn(math.matrix([[widthCovered], [y * GAME_HEIGHT]]));
 
             var leftThreshold = widthCovered < (GAME_WIDTH / 2 * 0.85);
             var rightThreshold = widthCovered > (GAME_WIDTH / 2 + (GAME_WIDTH / 2 * 0.15));
-
+ 
             // Creating reference points on the building for the gorillas to be placed on
             if (leftThreshold) {
                 LEFT_PLAYER_OPEN_POS.push(buildingOrigin);
             }
             else if (rightThreshold && (widthCovered + x * GAME_WIDTH <= GAME_WIDTH)) {
-                RIGHT_PLAYER_OPEN_POS.push(new Posn (buildingOrigin.x + x * GAME_WIDTH, buildingOrigin.y));
+                RIGHT_PLAYER_OPEN_POS.push(new Posn(math.matrix([[buildingOrigin.getX() + x * GAME_WIDTH], [buildingOrigin.getY()]])));
             }
 
             var building = new Building(x * GAME_WIDTH, y * GAME_HEIGHT, buildingOrigin);
@@ -139,22 +139,21 @@ class KinematicGorillaModel {
             switch (ii % 2) {
                 case 0:
                     var randomIdx = getRndInteger(0, LEFT_PLAYER_OPEN_POS.length - 1);
-                    position = new Posn(LEFT_PLAYER_OPEN_POS[randomIdx].x - width, LEFT_PLAYER_OPEN_POS[randomIdx].y + height);
+                    position = new Posn(math.matrix([[LEFT_PLAYER_OPEN_POS[randomIdx].getX() + width], [LEFT_PLAYER_OPEN_POS[randomIdx].getY() + height]]));
                     LEFT_PLAYER_OPEN_POS.splice(randomIdx, 1);
                     orientation = Orientation.LEFT;
                     break;
                 case 1:
                     var randomIdx = getRndInteger(0, RIGHT_PLAYER_OPEN_POS.length - 1);
-                    //console.log("Length of the Right Positions " + RIGHT_PLAYER_OPEN_POS.length);
-                    //console.log("This is the index " + randomIdx);
-                    //console.log(RIGHT_PLAYER_OPEN_POS[randomIdx]);
-                    position = new Posn(RIGHT_PLAYER_OPEN_POS[randomIdx].x, RIGHT_PLAYER_OPEN_POS[randomIdx].y + height);
+                    position = new Posn(math.matrix([[RIGHT_PLAYER_OPEN_POS[randomIdx].getX() - width], [RIGHT_PLAYER_OPEN_POS[randomIdx].getY() + height]]));
                     RIGHT_PLAYER_OPEN_POS.splice(randomIdx, 1);
                     orientation = Orientation.RIGHT;
                     break;
                 default:
                     break;
             }
+
+            //console.log(position);
 
             var gorilla = new Gorilla(position, orientation, width, height, playerIds[ii], MAX_SHOTS);
             gorillas.push(gorilla);
@@ -163,7 +162,7 @@ class KinematicGorillaModel {
         return gorillas;
     }
 
-    addBanana(playerId) {
+    addBanana(playerId, speed, angle) {
         for (var ii = 0; ii < this.gorillas.length; ii++) {
             if (this.gorillas[ii].playerId === playerId) {
                 var gorilla = this.gorillas[ii]
@@ -175,10 +174,10 @@ class KinematicGorillaModel {
                         bananaOrigin = gorilla.position;
                         break;
                     case Orientation.RIGHT:
-                        bananaOrigin = new Posn(gorilla.position.x + gorilla.width, gorilla.position.y);
+                        bananaOrigin = new Posn(math.matrix([[gorilla.position.getX() + gorilla.width], [gorilla.position.getY()]]));
                 }
 
-                var banana = new Banana(bananaOrigin, null, gorilla);
+                var banana = new Banana(bananaOrigin, math.matrix([[speed * Math.cos(angle * Math.PI / 180)], [speed * Math.sin(angle * Math.PI / 180)]]), gorilla);
 
                 this.bananas.push(banana);
 
@@ -236,16 +235,16 @@ class RenderView {
             this.context.fillStyle = "#ffffff";
             this.context.fillRect(x, y, 40, 60);
         }
-
     }
 }
+
 function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
 var worldGame = new KinematicGorillaModel(["Adam", "Joshua"]);
-console.log(worldGame.gorillas[0].position);
-console.log(worldGame.gorillas[1].position);
+console.log(worldGame.gorillas[0].position.toString());
+console.log(worldGame.gorillas[1].position.toString());
 
 window.onload = function() {
     // Get the canvas and context
@@ -340,6 +339,10 @@ window.onload = function() {
                     collided = true;
                 }
             });
+
+            if (banana.position.getX() > GAME_WIDTH || banana.position.getY() < GAME_WIDTH) {
+                collided = true;
+            }
 
             if (collided) {
                 // Trigger explosion at the position the banana was located formerly
