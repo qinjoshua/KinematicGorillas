@@ -100,22 +100,24 @@ class RenderView {
         this.context.fillRect(x, y, 40, 60);
     }
 
-    renderGorillaWithBanana(x, y) {
+    renderGorillaBreathing(x, y) {
 
         this.context.fillStyle = "#000000";
         this.context.font = "24px Verdana";
-        this.context.fillText("Speed: " + this.bananaThrow, 100, 50);
-        this.bananaThrow = this.bananaThrow + 1;
-        console.log(this.bananaThrow)
-        if (x % 2 === 0) {
+        this.context.fillText("Throws: " + this.bananaThrow, 100, 50);
+        var breatheUp = true;
+
+        if (breatheUp || this.bananaThrow % 30 === 0) {
             this.context.fillStyle = "#000000";
             this.context.fillRect(x, y, 40, 60);
+            breatheUp = false;
         }
         else {
             this.context.fillStyle = "#ffffff";
             this.context.fillRect(x, y, 40, 60);
+            breatheUp = true;
         }
-    
+        this.bananaThrow = this.bananaThrow + 1;
     }
 }
 
@@ -138,6 +140,8 @@ window.onload = function() {
     var fpstime = 0;
     var framecount = 0;
     var fps = 0;
+    var view = new RenderView(context);
+
     
     // Initialize the game
     function init() {
@@ -202,8 +206,7 @@ window.onload = function() {
         context.font = "12px Verdana";
         context.fillText("Fps: " + fps, 13, 70);
 
-       var view = new RenderView(context);
-       view.renderGorillaWithBanana(99,99)
+       view.renderGorillaBreathing(99,99)
        view.renderBanana(framecount, 99);
        
     }
