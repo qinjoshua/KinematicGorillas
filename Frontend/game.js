@@ -2,8 +2,9 @@ var gameWidth;
 var gameHeight;
 
 var pixelsInPosn;
- 
-class Posn{
+
+
+class Posn {
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -25,7 +26,7 @@ class BananaFactory {
     }
 
     createBanana() {
-        
+
     }
 }
 
@@ -67,7 +68,7 @@ class KinematicGorillaModel {
 }
 
 
-class RenderView {        
+class RenderView {
     constructor(context) {
         this.context = context
         this.tick = 1;
@@ -77,13 +78,13 @@ class RenderView {
     getRandomColor() {
         const letters = '0123456789abcdef'.split('');
         let color = '#';
-      
+
         for (let i = 0; i < 6; i++) {
-          color += letters[Math.round(Math.random() * 15)];
+            color += letters[Math.round(Math.random() * 15)];
         }
-        
+
         return color;
-      }
+    }
 
     renderBuilding(x, y, width, height) {
         var randColor = this.getRandomColor();
@@ -98,14 +99,16 @@ class RenderView {
 
     renderGorilla(x, y, banana) {
         if (banana) {
-            this.renderGorillaBanana(x,y)
+            this.renderGorillaBanana(x, y)
         }
         else {
-            this.renderGorillaBreathing(x,y)
+            this.renderGorillaBreathing(x, y)
         }
     }
 
     renderGorillaBreathing(x, y) {
+        var imgBreatheUpGorilla = document.getElementById("bu-img");
+        var imgBreatheDownGorilla = document.getElementById("bd-img");
 
         this.context.fillStyle = "#000000";
         this.context.font = "24px Verdana";
@@ -115,12 +118,14 @@ class RenderView {
         }
 
         if (this.breatheUp) {
-            this.context.fillStyle = "#000000";
-            this.context.fillRect(x, y, 40, 60);
+            // this.context.fillStyle = "#000000";
+            // this.context.fillRect(x, y, 40, 60);
+            this.context.drawImage(imgBreatheUpGorilla, x, y);
         }
         else {
-            this.context.fillStyle = "#ffffff";
-            this.context.fillRect(x, y, 40, 60);
+            // this.context.fillStyle = "#ffffff";
+            // this.context.fillRect(x, y, 40, 60);
+            this.context.drawImage(imgBreatheDownGorilla, x, y);
         }
         this.tick = this.tick + 1;
     }
@@ -146,9 +151,9 @@ class RenderView {
 }
 
 
-window.onload = function() {
+window.onload = function () {
     // Get the canvas and context
-    var canvas = document.getElementById("viewport"); 
+    var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
 
     function resize() {
@@ -166,16 +171,16 @@ window.onload = function() {
     var fps = 0;
     var view = new RenderView(context);
 
-    
+
     // Initialize the game
     function init() {
         // render initial background here (gorillas and buildings)
-       
+
 
         // Enter main loop
         main(0);
     }
-    
+
     // Main loop
     function main(tframe) {
         // Request animation frames
@@ -185,56 +190,56 @@ window.onload = function() {
         update(tframe);
         render();
     }
-    
+
     // Update the game state
     function update(tframe) {
         var dt = (tframe - lastframe) / 1000;
         lastframe = tframe;
-        
+
         // Update the fps counter
         updateFps(dt);
     }
-    
+
     function updateFps(dt) {
         if (fpstime > 0.25) {
             // Calculate fps
             fps = Math.round(framecount / fpstime);
-            
+
             // Reset time and framecount
             fpstime = 0;
             framecount = 0;
         }
-        
+
         // Increase time and framecount
         fpstime += dt;
         framecount++;
     }
-    
+
     // Render the game
     function render() {
         // Draw the frame
         drawFrame();
     }
 
-    
+
     function drawFrame() {
-        
+
         // Draw background and a border
         context.fillStyle = "#d0d0d0";
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = "#0ce6ff";
-        context.fillRect(1, 1, canvas.width-2, canvas.height-2);
-        
+        context.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
+
         // Display fps
         context.fillStyle = "#ffffff";
         context.font = "12px Verdana";
         context.fillText("Fps: " + fps, 13, 70);
 
-       view.renderGorillaBreathing(99,99)
-       view.renderBanana(framecount, 99);
-       
+        view.renderGorillaBreathing(99, 99)
+        view.renderBanana(framecount, 99);
+
     }
-    
+
     // Call init to start the game
     init();
 };
