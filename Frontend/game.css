@@ -1,4 +1,23 @@
 html,
 body {
+    margin: 0;
+    font-family: sans-serif;
     overflow: hidden;
+}
+
+#viewport-container {
+    flex: 1;
+    margin: 0;
+    background-color: darkgray;
+}
+
+#main {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+#launch-form {
+    padding: 1rem;
+    line-height: 1.5rem;
 }

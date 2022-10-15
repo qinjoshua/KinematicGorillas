@@ -1,23 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <title>Kinematic Gorillas</title>
-    <script type="text/javascript" src="game.js"></script>
-    <link rel="stylesheet" type="text/css" href="game.css" media=”screen” />
+    <link rel="stylesheet" type="text/css" href="game.css" />
 </head>
 
 <body>
-    <canvas id="viewport" width="1250" height="750">
-    </canvas>
-    <img src="images/breathe-down.png" style="max-width: 5%; display: none;" id="bd-img">
-    <img src="images/breathe-up.png" style="max-width: 5%; display: none;" id="bu-img">
-    <img src="images/gorilla-win-1.png" style="max-width: 5%; display: none;" id="win1-img">
-    <img src="images/gorilla-win-2.png" style="max-width: 5%; display: none;" id="win2-img">
-    <img src="images/gorilla-with-banana.png" style="max-width: 5%; display: none;" id="wb-img">
-    <img src="images/banana.png" style="max-width: 5%; display: none;" id="banana-img">
-
+    <div id="main">
+        <div id="viewport-container">
+            <canvas id="viewport" width="1250" height="750"></canvas>
+            <img src="images/breathe-down.png" style="max-width: 5%; display: none;" id="bd-img">
+            <img src="images/breathe-up.png" style="max-width: 5%; display: none;" id="bu-img">
+            <img src="images/gorilla-win-1.png" style="max-width: 5%; display: none;" id="win1-img">
+            <img src="images/gorilla-win-2.png" style="max-width: 5%; display: none;" id="win2-img">
+            <img src="images/gorilla-with-banana.png" style="max-width: 5%; display: none;" id="wb-img">
+            <img src="images/banana.png" style="max-width: 5%; display: none;" id="banana-img">
+        </div>
+        <form id="launch-form">
+            <div>
+                <label for="angle">Angle (in radians):</label><br>
+                <input type="text" id="angle" name="angle"><br>
+                <label for="velocity">Velocity:</label><br>
+                <input type="text" id="velocity" name="velocity">
+            </div>
+            <div>
+                <button type="submit" value="Submit">Launch</button>
+            </div>
+        </form>
+    </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.3.0/math.js"
+    integrity="sha512-KbNw0OskcuIOm8RXUYqG64yNFaZcmafzkaJtZLZ/PBjHOogCKDrBvKZi0pnbfTQ6o5Y/16NmH4mhl6ytjwDkrg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="game.js"></script>
 
 </html>
