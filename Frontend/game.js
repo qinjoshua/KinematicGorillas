@@ -127,7 +127,7 @@ class KinematicGorillaModel {
     addGorillas(playerIds) {
         var gorillas = [];
 
-        console.log(playerIds)
+        //console.log(playerIds)
         for (var ii = 0; ii < playerIds.length; ii++) {
             var position;
             var orientation;
@@ -153,6 +153,8 @@ class KinematicGorillaModel {
                 default:
                     break;
             }
+
+            console.log("This is gorilla position " + position);
 
             var gorilla = new Gorilla(position, orientation, width, height, playerIds[ii], MAX_SHOTS);
             gorillas.push(gorilla);
@@ -205,10 +207,19 @@ class RenderView {
     }
 
     renderBuilding(x, y, width, height) {
+        //put window function here
         var randColor = this.getRandomColor();
         this.context.fillStyle = randColor;
         this.context.fillRect(x, y, width, height);
     }
+
+    renderBuildings(buildings) {
+        for (let i = 0; i < buildings.size(); i++) {
+            let building = buildings[i];
+            this.renderBuilding(building.position.getX(), building.position.getY(), building.width, building.height);
+        }
+    }
+
 
     renderBanana(x, y) {
         var banana = document.getElementById("banana-img");
@@ -305,15 +316,16 @@ function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-var worldGame = new KinematicGorillaModel(["Adam", "Joshua"]);
-console.log(worldGame.gorillas[0].position);
-console.log(worldGame.gorillas[1].position);
+//var worldGame = new KinematicGorillaModel(["Adam", "Joshua"]);
+//console.log(worldGame.gorillas[0].position);
+//console.log(worldGame.gorillas[1].position);
 
 window.onload = function () {
     // Get the canvas and context
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
     var model = new KinematicGorillaModel(["Adam", "Joshua"]);
+    console.log(model.gorillas[0].position);
 
     function resize() {
         var container = document.getElementById("viewport-container");
@@ -425,8 +437,16 @@ window.onload = function () {
         context.font = "12px Verdana";
         context.fillText("Fps: " + fps, 13, 70);
 
+        //console.log("hello");
+
         // var view = new RenderView()
-        view.renderGorillaBreathing(99, 99);
+        // for (var ii = 0; ii < model.gorillas.length; ii++) {
+        //     //console.log("hi");
+        //     //console.log(model.gorillas[ii].position.getX());
+        //     //console.log(model.gorillas[ii].position.getY());
+        //     view.renderGorillaBreathing(model.gorillas[ii].position.getX(), model.gorillas[ii].position.getY());
+        // }
+
         view.renderBanana(framecount, 99);
 
     }
