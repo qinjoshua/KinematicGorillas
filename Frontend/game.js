@@ -2,7 +2,7 @@ var gameWidth;
 var gameHeight;
 
 var pixelsInPosn;
-
+ 
 class Posn{
     constructor(x, y) {
         this.x = x;
@@ -17,7 +17,7 @@ class Posn{
         return gameHeight - (this.y * pixelsInPosn);
     }
 }
-
+s
 class BananaFactory {
     constructor(position, velocity) {
         this.position = position;
