@@ -5,17 +5,19 @@ var pixelsInPosn;
 
 var GRAVITY = math.matrix([[0], [9.8]]);
 
+var launch = false;
+
 class Posn{
     constructor(vector) {
         this.vector = vector;
     }
 
     getX() {
-        return this.x;
+        return this.vector.subset(math.index(0, 0));
     }
 
     getY() {
-        return this.y;
+        return this.vector.subset(math.index(1, 0));
     }
 }
 
@@ -218,6 +220,13 @@ window.onload = function() {
                 model.bananas.removeChild(banana);
             }
         });
+
+        // Launch a banana
+        if (launch) {
+            launch = false;
+
+            
+        }
     }
     
     // Render the game
@@ -225,7 +234,6 @@ window.onload = function() {
         // Draw the frame
         drawFrame();
     }
-
     
     function drawFrame() {
         
@@ -251,5 +259,13 @@ window.onload = function() {
 };
 
 var form = document.getElementById("launch-form");
-function handleForm(event) { event.preventDefault(); } 
+function handleForm(event) {
+    event.preventDefault();
+    if (document.getElementById("angle").value !== "" && document.getElementById("velocity").value !== "") {
+        alert("Please enter an angle and and initial velocity");
+    }
+    else {
+        launch = true;
+    }
+} 
 form.addEventListener('submit', handleForm);
