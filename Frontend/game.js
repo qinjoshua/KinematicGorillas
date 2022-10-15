@@ -11,7 +11,7 @@ let MAX_SHOTS = 3;
 
 var PIXEL_TO_POSN;
 
-var GRAVITY = math.matrix([[0], [9.8]]);
+var GRAVITY = math.matrix([[0], [-9.8]]);
 
 var launch = false;
 
@@ -272,6 +272,9 @@ window.onload = function() {
     var framecount = 0;
     var fps = 0;
 
+    // TODO: we've got to be able to set playerID somehow
+    var playerID = "";
+
     // Initialize the game
     function init() {
         // render initial background here (gorillas and buildings)
@@ -310,14 +313,17 @@ window.onload = function() {
             framecount = 0;
         }
 
+
+        console.log(dt);
+
         // Increase time and framecount
         fpstime += dt;
         framecount++;
 
         // Update bannana positions, check for collision
         model.bananas.forEach(banana => {
-            banana.velocity = math.add(banana.velocity, banana.GRAVITY);
-            banana.position = new Posn(math.add(banana.position.getPosition(), banana.velocity));
+            banana.velocity = math.add(banana.velocity, math.multiply(banana.GRAVITY, dt));
+            banana.position = new Posn(math.add(banana.position.getPosition(), math.multiply(banana.velocity, dt)));
 
             // Check for collisions
             var collided = false;
@@ -336,6 +342,8 @@ window.onload = function() {
             });
 
             if (collided) {
+                // Trigger explosion at the position the banana was located formerly
+                
                 model.bananas.removeChild(banana);
             }
         });
@@ -343,8 +351,7 @@ window.onload = function() {
         // Launch a banana
         if (launch) {
             launch = false;
-
-            
+            this.model.addBanana(playerID);
         }
     }
 
@@ -355,7 +362,6 @@ window.onload = function() {
     }
 
     function drawFrame() {
-
         // Draw background and a border
         context.fillStyle = "#d0d0d0";
         context.fillRect(0, 0, canvas.width, canvas.height);
@@ -370,7 +376,6 @@ window.onload = function() {
        // var view = new RenderView()
        // view.renderGorillaWithBanana(99,99)
        // view.renderBanana(99,99)
-
     }
 
     // Call init to start the game
