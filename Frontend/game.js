@@ -1,3 +1,71 @@
+var gameWidth;
+var gameHeight;
+
+var pixelsInPosn;
+
+class Posn{
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    getX() {
+        return this.x * pixelsInPosn;
+    }
+
+    getY() {
+        return gameHeight - (this.y * pixelsInPosn);
+    }
+}
+
+class BananaFactory {
+    constructor(position, velocity) {
+        this.position = position;
+        this.velocity = velocity;
+    }
+
+    createBanana() {
+        
+    }
+}
+
+class Banana {
+    constructor(position, velocity, gorilla) {
+        this.position = position;
+        this.velocity = velocity;
+        this.gorilla = gorilla;
+    }
+}
+
+class Gorilla {
+    constructor(position, orientation, width, height, name, playerID, shots) {
+        this.position = position;
+        this.orientation = orientation;
+        this.width = width;
+        this.height = height;
+        this.name = name;
+        this.playerID = playerID;
+        this.shotsLeft = shots;
+        this.alive = true;
+    }
+}
+
+class Building {
+    constructor(height, width, color, position) {
+        this.height = height;
+        this.width = width;
+        this.color = color;
+        this.position = position;
+    }
+}
+class KinematicGorillaModel {
+    constructor() {
+        this.buildings = [];
+        this.gorillas = [];
+        this.bananas = [];
+    }
+}
+
 window.onload = function() {
     // Get the canvas and context
     var canvas = document.getElementById("viewport"); 
