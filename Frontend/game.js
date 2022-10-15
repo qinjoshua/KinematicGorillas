@@ -66,6 +66,37 @@ class KinematicGorillaModel {
     }
 }
 
+class RenderView {
+    constructor() {
+    }
+
+    gtRandomColor() {
+        const letters = '0123456789abcdef'.split('');
+        let color = '#';
+      
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.round(Math.random() * 15)];
+        }
+        
+        return color;
+      }
+
+    renderBuilding(x, y, width, height) {
+        context.fillStyle = getRandomColor()
+        context.fillRect(x, y, width, height)
+    }
+
+    renderBanana(x, y) {
+        context.fillStyle("#FFFF00")
+        context.fillRect(x, y, 10, 10)
+    }
+
+    renderGorilla(x, y) {
+        context.fillStyle("#000000")
+        context.fillRect(x, y, 0.01 * canvas.width, 0.01 * canvas.height)
+    }
+}
+
 window.onload = function() {
     // Get the canvas and context
     var canvas = document.getElementById("viewport"); 
@@ -159,21 +190,7 @@ window.onload = function() {
         context.font = "12px Verdana";
         context.fillText("Fps: " + fps, 13, 50);
     }
-    
-    // Mouse event handlers
-    function onMouseMove(e) {}
-    function onMouseDown(e) {}
-    function onMouseUp(e) {}
-    function onMouseOut(e) {}
-    
-    // Get the mouse position
-    function getMousePos(canvas, e) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-            x: Math.round((e.clientX - rect.left)/(rect.right - rect.left)*canvas.width),
-            y: Math.round((e.clientY - rect.top)/(rect.bottom - rect.top)*canvas.height)
-        };
-    }
+
     
     // Call init to start the game
     init();
