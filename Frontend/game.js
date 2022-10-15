@@ -71,6 +71,7 @@ class RenderView {
     constructor(context) {
         this.context = context
         this.bananaThrow = 1;
+        this.breatheUp = true;
     }
 
     getRandomColor() {
@@ -105,19 +106,27 @@ class RenderView {
         this.context.fillStyle = "#000000";
         this.context.font = "24px Verdana";
         this.context.fillText("Throws: " + this.bananaThrow, 100, 50);
-        var breatheUp = true;
+        if (this.bananaThrow % 30 === 0) {
+            this.breatheUp = !this.breatheUp;
+        }
 
-        if (breatheUp || this.bananaThrow % 30 === 0) {
+        if (this.breatheUp) {
             this.context.fillStyle = "#000000";
             this.context.fillRect(x, y, 40, 60);
-            breatheUp = false;
         }
         else {
             this.context.fillStyle = "#ffffff";
             this.context.fillRect(x, y, 40, 60);
-            breatheUp = true;
         }
         this.bananaThrow = this.bananaThrow + 1;
+    }
+
+    renderGorillaWin(x, y) {
+        // same as GorillaBreathing, different images
+    }
+
+    renderGorillaBanana(x, y) {
+
     }
 }
 
