@@ -1,12 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Kinematic Gorillas</title>
-        <script type="text/javascript" src="game.js"></script>
-        <link rel="stylesheet" type="text/css" href="game.css" media=”screen” />
+        <link rel="stylesheet" type="text/css" href="game.css" />
     </head>
     <body>
-        <canvas id="viewport" width="1250" height="750"></canvas>
+        <div id="main">
+            <div id="viewport-container">
+                <canvas id="viewport" width="1250" height="750"></canvas>
+            </div>
+            <form id="launchForm">
+                <div>
+                    <label for="angle">Angle (in radians):</label><br>
+                    <input type="text" id="angle" name="angle"><br>
+                    <label for="velocity">Velocity:</label><br>
+                    <input type="text" id="velocity" name="velocity">
+                </div>
+                <div>
+                    <button type="submit" value="Submit">Launch</button>
+                </div>
+            </form>
+        </div>        
     </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.3.0/math.js" integrity="sha512-KbNw0OskcuIOm8RXUYqG64yNFaZcmafzkaJtZLZ/PBjHOogCKDrBvKZi0pnbfTQ6o5Y/16NmH4mhl6ytjwDkrg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="game.js"></script>
 </html>

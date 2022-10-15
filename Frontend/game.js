@@ -3,18 +3,19 @@ var gameHeight;
 
 var pixelsInPosn;
 
+var GRAVITY = math.matrix([[0], [9.8]]);
+
 class Posn{
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
+    constructor(vector) {
+        this.vector = vector;
     }
 
     getX() {
-        return this.x * pixelsInPosn;
+        return this.x;
     }
 
     getY() {
-        return gameHeight - (this.y * pixelsInPosn);
+        return this.y;
     }
 }
 
@@ -57,7 +58,15 @@ class Building {
         this.color = color;
         this.position = position;
     }
+
+    containsPoint(pointPosn) {
+        return this.position.getX() > pointPosn.getX() &&
+            this.position.getY() > pointPosn.getY() &&
+            this.position.getX() < pointPosn.getX() + this.width &&
+            this.position.getY() < pointPosn.getY() - this.height;
+    }
 }
+
 class KinematicGorillaModel {
     constructor() {
         this.buildings = [];
@@ -65,15 +74,19 @@ class KinematicGorillaModel {
         this.bananas = [];
     }
 }
-
+ 
 window.onload = function() {
     // Get the canvas and context
     var canvas = document.getElementById("viewport"); 
     var context = canvas.getContext("2d");
+    var model = new KinematicGorillaModel();
 
     function resize() {
-        canvas.width = document.body.clientWidth;
-        canvas.height = document.body.clientHeight;
+        var container = document.getElementById("viewport-container");
+        gameWidth = container.clientWidth;
+        gameHeight = container.clientHeight;
+        canvas.width = gameWidth;
+        canvas.height = gameHeight;
     }
 
     resize();
@@ -129,6 +142,32 @@ window.onload = function() {
         // Increase time and framecount
         fpstime += dt;
         framecount++;
+
+        // Update bannana positions, check for collision
+        model.bananas.forEach(banana => {
+            banana.velocity = math.add(banana.velocity, banana.GRAVITY);
+            banana.position = new Posn(math.add(banana.position.getPosition(), banana.velocity));
+
+            // Check for collisions
+            var collided = false;
+
+            model.buildings.forEach(building => {
+                if (building.containsPoint()) {
+                    collided = true;
+                }
+            });
+
+            model.gorillas.forEach(gorilla => {
+                if (gorilla.containsPoint()) {
+                    gorilla.alive = false;
+                    collided = true;
+                }
+            });
+
+            if (collided) {
+                model.bananas.removeChild(banana);
+            }
+        });
     }
     
     // Render the game
@@ -178,3 +217,7 @@ window.onload = function() {
     // Call init to start the game
     init();
 };
+
+var form = document.getElementById("launchForm");
+function handleForm(event) { event.preventDefault(); } 
+form.addEventListener('submit', handleForm);
