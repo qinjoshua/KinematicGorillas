@@ -1,7 +1,15 @@
-var gameWidth;
-var gameHeight;
+let GAME_WIDTH = 200;
+let GAME_HEIGHT = 100;
 
-var pixelsInPosn;
+let GORILLA_WIDTH_FACTOR = 0.1;
+let GORILLA_HEIGHT_FACTOR = 0.025;
+
+let LEFT_PLAYER_OPEN_POS = [];
+let RIGHT_PLAYER_OPEN_POS = [];
+
+let MAX_SHOTS = 3;
+
+var PIXEL_TO_POSN;
 
 var GRAVITY = math.matrix([[0], [9.8]]);
 
@@ -19,6 +27,10 @@ class Posn{
     getY() {
         return this.vector.subset(math.index(1, 0));
     }
+
+    toString() {
+        return "X: " + this.x + ", Y: " + this.y;
+    }
 }
 
 class BananaFactory {
@@ -28,7 +40,7 @@ class BananaFactory {
     }
 
     createBanana() {
-        
+
     }
 }
 
@@ -40,13 +52,17 @@ class Banana {
     }
 }
 
+const Orientation = {
+    LEFT: 0,
+    RIGHT: 1
+};
+
 class Gorilla {
-    constructor(position, orientation, width, height, name, playerID, shots) {
+    constructor(position, orientation, width, height, playerID, shots) {
         this.position = position;
         this.orientation = orientation;
         this.width = width;
         this.height = height;
-        this.name = name;
         this.playerID = playerID;
         this.shotsLeft = shots;
         this.alive = true;
@@ -54,10 +70,9 @@ class Gorilla {
 }
 
 class Building {
-    constructor(height, width, color, position) {
-        this.height = height;
+    constructor(width, height, position) {
         this.width = width;
-        this.color = color;
+        this.height = height;
         this.position = position;
     }
 
@@ -70,13 +85,110 @@ class Building {
 }
 
 class KinematicGorillaModel {
-    constructor() {
-        this.buildings = [];
-        this.gorillas = [];
+    constructor(playerIds) {
+        this.buildings = this.createSkyline();
+        // TODO: Turn array into Map of PlayerID->Gorilla
+        this.gorillas = this.addGorillas(playerIds);
         this.bananas = [];
     }
+
+    // Randomly generates a skyline of buildings of different heights and widths
+    createSkyline() {
+        LEFT_PLAYER_OPEN_POS = [];
+        RIGHT_PLAYER_OPEN_POS = [];
+        var widthCovered = 0;
+        var buildings = [];
+
+        while (widthCovered < GAME_WIDTH) {
+            var x = getRndInteger(2, 4) * 0.05;
+            var y = getRndInteger(3, 8) * 0.1;
+
+            let buildingOrigin = new Posn(widthCovered, y * GAME_HEIGHT);
+
+            var leftThreshold = widthCovered < (GAME_WIDTH / 2 * 0.85);
+            var rightThreshold = widthCovered > (GAME_WIDTH / 2 + (GAME_WIDTH / 2 * 0.15));
+
+            // Creating reference points on the building for the gorillas to be placed on
+            if (leftThreshold) {
+                LEFT_PLAYER_OPEN_POS.push(buildingOrigin);
+            }
+            else if (rightThreshold && (widthCovered + x * GAME_WIDTH <= GAME_WIDTH)) {
+                RIGHT_PLAYER_OPEN_POS.push(new Posn (buildingOrigin.x + x * GAME_WIDTH, buildingOrigin.y));
+            }
+
+            var building = new Building(x * GAME_WIDTH, y * GAME_HEIGHT, buildingOrigin);
+            buildings.push(building);
+
+            widthCovered = widthCovered + (x * GAME_HEIGHT);
+        }
+
+        return buildings;
+    }
+
+    // Adds Gorillas representing players to the game
+    addGorillas(playerIds) {
+        var gorillas = [];
+
+        console.log(playerIds)
+        for (var ii = 0; ii < playerIds.length; ii++) {
+            var position;
+            var orientation;
+            var width = GAME_WIDTH * GORILLA_WIDTH_FACTOR;
+            var height = GAME_HEIGHT * GORILLA_HEIGHT_FACTOR;
+
+            switch (ii % 2) {
+                case 0:
+                    var randomIdx = getRndInteger(0, LEFT_PLAYER_OPEN_POS.length - 1);
+                    position = new Posn(LEFT_PLAYER_OPEN_POS[randomIdx].x - width, LEFT_PLAYER_OPEN_POS[randomIdx].y + height);
+                    LEFT_PLAYER_OPEN_POS.splice(randomIdx, 1);
+                    orientation = Orientation.LEFT;
+                    break;
+                case 1:
+                    var randomIdx = getRndInteger(0, RIGHT_PLAYER_OPEN_POS.length - 1);
+                    //console.log("Length of the Right Positions " + RIGHT_PLAYER_OPEN_POS.length);
+                    //console.log("This is the index " + randomIdx);
+                    //console.log(RIGHT_PLAYER_OPEN_POS[randomIdx]);
+                    position = new Posn(RIGHT_PLAYER_OPEN_POS[randomIdx].x, RIGHT_PLAYER_OPEN_POS[randomIdx].y + height);
+                    RIGHT_PLAYER_OPEN_POS.splice(randomIdx, 1);
+                    orientation = Orientation.RIGHT;
+                    break;
+                default:
+                    break;
+            }
+
+            var gorilla = new Gorilla(position, orientation, width, height, playerIds[ii], MAX_SHOTS);
+            gorillas.push(gorilla);
+        }
+
+        return gorillas;
+    }
+
+    addBanana(playerId) {
+        for (var ii = 0; ii < this.gorillas.length; ii++) {
+            if (this.gorillas[ii].playerId === playerId) {
+                var gorilla = this.gorillas[ii]
+
+                var bananaOrigin;
+
+                switch (gorilla.orientation) {
+                    case Orientation.LEFT:
+                        bananaOrigin = gorilla.position;
+                        break;
+                    case Orientation.RIGHT:
+                        bananaOrigin = new Posn(gorilla.position.x + gorilla.width, gorilla.position.y);
+                }
+
+                var banana = new Banana(bananaOrigin, null, gorilla);
+
+                this.bananas.push(banana);
+
+                return;
+            }
+        }
+    }
 }
-class RenderView {        
+
+class RenderView {
     constructor(context) {
         this.context = context
         this.bananaThrow = 1;
@@ -85,11 +197,11 @@ class RenderView {
     getRandomColor() {
         const letters = '0123456789abcdef'.split('');
         let color = '#';
-      
+
         for (let i = 0; i < 6; i++) {
           color += letters[Math.round(Math.random() * 15)];
         }
-        
+
         return color;
       }
 
@@ -124,15 +236,22 @@ class RenderView {
             this.context.fillStyle = "#ffffff";
             this.context.fillRect(x, y, 40, 60);
         }
-    
+
     }
 }
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+var worldGame = new KinematicGorillaModel(["Adam", "Joshua"]);
+console.log(worldGame.gorillas[0].position);
+console.log(worldGame.gorillas[1].position);
 
 window.onload = function() {
     // Get the canvas and context
-    var canvas = document.getElementById("viewport"); 
+    var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
-    var model = new KinematicGorillaModel();
+    var model = new KinematicGorillaModel(["Adam", "Joshua"]);
 
     function resize() {
         var container = document.getElementById("viewport-container");
@@ -152,16 +271,16 @@ window.onload = function() {
     var fpstime = 0;
     var framecount = 0;
     var fps = 0;
-    
+
     // Initialize the game
     function init() {
         // render initial background here (gorillas and buildings)
-       
+
 
         // Enter main loop
         main(0);
     }
-    
+
     // Main loop
     function main(tframe) {
         // Request animation frames
@@ -171,26 +290,26 @@ window.onload = function() {
         update(tframe);
         render();
     }
-    
+
     // Update the game state
     function update(tframe) {
         var dt = (tframe - lastframe) / 1000;
         lastframe = tframe;
-        
+
         // Update the fps counter
         updateFps(dt);
     }
-    
+
     function updateFps(dt) {
         if (fpstime > 0.25) {
             // Calculate fps
             fps = Math.round(framecount / fpstime);
-            
+
             // Reset time and framecount
             fpstime = 0;
             framecount = 0;
         }
-        
+
         // Increase time and framecount
         fpstime += dt;
         framecount++;
@@ -228,21 +347,21 @@ window.onload = function() {
             
         }
     }
-    
+
     // Render the game
     function render() {
         // Draw the frame
         drawFrame();
     }
-    
+
     function drawFrame() {
-        
+
         // Draw background and a border
         context.fillStyle = "#d0d0d0";
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = "#0ce6ff";
         context.fillRect(1, 1, canvas.width-2, canvas.height-2);
-        
+
         // Display fps
         context.fillStyle = "#ffffff";
         context.font = "12px Verdana";
@@ -251,9 +370,9 @@ window.onload = function() {
        // var view = new RenderView()
        // view.renderGorillaWithBanana(99,99)
        // view.renderBanana(99,99)
-       
+
     }
-    
+
     // Call init to start the game
     init();
 };
