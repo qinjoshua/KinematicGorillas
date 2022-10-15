@@ -70,7 +70,7 @@ class KinematicGorillaModel {
 class RenderView {        
     constructor(context) {
         this.context = context
-        this.bananaThrow = 1;
+        this.tick = 1;
         this.breatheUp = true;
     }
 
@@ -96,17 +96,21 @@ class RenderView {
         this.context.fillRect(x, y, 10, 10);
     }
 
-    renderGorilla(x, y) {
-        this.context.fillStyle = "#000000";
-        this.context.fillRect(x, y, 40, 60);
+    renderGorilla(x, y, banana) {
+        if (banana) {
+            this.renderGorillaBanana(x,y)
+        }
+        else {
+            this.renderGorillaBreathing(x,y)
+        }
     }
 
     renderGorillaBreathing(x, y) {
 
         this.context.fillStyle = "#000000";
         this.context.font = "24px Verdana";
-        this.context.fillText("Throws: " + this.bananaThrow, 100, 50);
-        if (this.bananaThrow % 30 === 0) {
+        this.context.fillText("Throws: " + this.tick, 100, 50);
+        if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
         }
 
@@ -118,16 +122,27 @@ class RenderView {
             this.context.fillStyle = "#ffffff";
             this.context.fillRect(x, y, 40, 60);
         }
-        this.bananaThrow = this.bananaThrow + 1;
+        this.tick = this.tick + 1;
     }
 
     renderGorillaWin(x, y) {
-        // same as GorillaBreathing, different images
+        // same as GorillaBreathing, different images, maybe slower
     }
 
-    renderGorillaBanana(x, y) {
-
+    renderGorillaBanana(x, y, withBanana) {
+        // just the image according to the boolean given
+        if (withBanana) {
+            // image of gorilla holding banana
+            this.context.fillStyle = "#000000";
+            this.context.fillRect(x, y, 40, 60);
+        }
+        else {
+            // same pos: image of gorilla without banana
+            this.context.fillStyle = "#ffffff";
+            this.context.fillRect(x, y, 40, 60);
+        }
     }
+
 }
 
 
