@@ -17,7 +17,7 @@ class Posn{
         return gameHeight - (this.y * pixelsInPosn);
     }
 }
-s
+
 class BananaFactory {
     constructor(position, velocity) {
         this.position = position;
@@ -202,9 +202,9 @@ window.onload = function() {
         context.font = "12px Verdana";
         context.fillText("Fps: " + fps, 13, 70);
 
-       // var view = new RenderView()
-       // view.renderGorillaWithBanana(99,99)
-       // view.renderBanana(99,99)
+       var view = new RenderView(context);
+       view.renderGorillaWithBanana(99,99)
+       view.renderBanana(framecount, 99);
        
     }
     
