@@ -93,8 +93,13 @@ class RenderView {
     }
 
     renderBanana(x, y) {
-        this.context.fillStyle = "#FFFF00";
-        this.context.fillRect(x, y, 10, 10);
+        var banana = document.getElementById("banana-img");
+        var canvas = document.getElementById("viewport");
+
+        // this.context.fillStyle = "#FFFF00";
+        // this.context.fillRect(x, y, 10, 10);
+        this.context.drawImage(banana, x, y, 0.01 * canvas.width, 0.025 * canvas.height);
+
     }
 
     renderGorilla(x, y, banana) {
@@ -111,9 +116,9 @@ class RenderView {
         var imgBreatheDownGorilla = document.getElementById("bd-img");
         var canvas = document.getElementById("viewport");
 
-        this.context.fillStyle = "#000000";
-        this.context.font = "24px Verdana";
-        this.context.fillText("Throws: " + this.tick, 100, 50);
+        // this.context.fillStyle = "#000000";
+        // this.context.font = "24px Verdana";
+        // this.context.fillText("Throws: " + this.tick, 100, 50);
         if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
         }
@@ -132,20 +137,48 @@ class RenderView {
     }
 
     renderGorillaWin(x, y) {
-        // same as GorillaBreathing, different images, maybe slower
+        var imgWinUpGorilla = document.getElementById("win1-img");
+        var imgWinDownGorilla = document.getElementById("win2-img");
+        var canvas = document.getElementById("viewport");
+
+        // this.context.fillStyle = "#000000";
+        // this.context.font = "24px Verdana";
+        // this.context.fillText("Throws: " + this.tick, 100, 50);
+        if (this.tick % 30 === 0) {
+            this.breatheUp = !this.breatheUp;
+        }
+
+        if (this.breatheUp) {
+            // this.context.fillStyle = "#000000";
+            // this.context.fillRect(x, y, 40, 60);
+            this.context.drawImage(imgWinUpGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+        }
+        else {
+            // this.context.fillStyle = "#ffffff";
+            // this.context.fillRect(x, y, 40, 60);
+            this.context.drawImage(imgWinDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+        }
+        this.tick = this.tick + 1;
     }
 
     renderGorillaBanana(x, y, withBanana) {
+        var imgWithBanana = document.getElementById("wb-img");
+        var imgWithoutBanana = document.getElementById("win1-img");
+        var canvas = document.getElementById("viewport");
+
         // just the image according to the boolean given
         if (withBanana) {
             // image of gorilla holding banana
-            this.context.fillStyle = "#000000";
-            this.context.fillRect(x, y, 40, 60);
+            // this.context.fillStyle = "#000000";
+            // this.context.fillRect(x, y, 40, 60);
+            this.context.drawImage(imgWithBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+
         }
         else {
             // same pos: image of gorilla without banana
-            this.context.fillStyle = "#ffffff";
-            this.context.fillRect(x, y, 40, 60);
+            // this.context.fillStyle = "#ffffff";
+            // this.context.fillRect(x, y, 40, 60);
+            this.context.drawImage(imgWithoutBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
         }
     }
 
@@ -236,8 +269,12 @@ window.onload = function () {
         context.font = "12px Verdana";
         context.fillText("Fps: " + fps, 13, 70);
 
-        view.renderGorillaBreathing(99, 99)
+        view.renderGorillaWin(99, 99);
+        view.renderGorillaBreathing(200, 200);
         view.renderBanana(framecount, 99);
+        view.renderGorillaBanana(300, 300, true);
+        view.renderGorillaBanana(400, 400, false);
+
 
     }
 
