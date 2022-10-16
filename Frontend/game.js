@@ -486,7 +486,7 @@ function getRndInteger(min, max) {
 function distanceBetweenTwoPoints(pos1, pos2) {
     let x = pos2.getX() - pos1.getX();
     let y = pos2.getY() - pos1.getY();
-    
+
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
@@ -630,61 +630,96 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            // Different states of Gorilla
-            view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
+            if (model.roundOver) {
+                if (model.gorillas[ii].alive) {
+                    view.renderGorillaWin(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+                } else {
+                    view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
+                }
+            } else if (LAUNCH_TIME !== null && (view.tick - LAUNCH_TIME > 60 * 5)) {
+                view.renderGorillaBanana(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+            } else {
+                view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+            }
         }
 
-        for (var ii = 0; ii < model.buildings.length; ii++) {
-            view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
-                metersToPixels(model.buildings[ii].width, canvas.width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
+/*for (var ii = 0; ii < model.gorillas.length; ii++) {
+    // Gorilla Wins
+    if (!model.gorillas[ii].alive) {
+        // the other gorilla wins
+        let winningGorilla;
+        if (ii === 0) {
+            winningGorilla = model.gorillas[1];
+        } else {
+            winningGorilla = model.gorillas[0];
         }
-
-        for (var ii = 0; ii < model.bananas.length; ii++) {
-            view.renderBanana(model.bananas[ii].position.getPixelX(), model.bananas[ii].position.getPixelY());
-        }
-        // view.renderBanana(framecount, 99);
-
-        if (measuringRuler.drawRuler) {
-            console.log(measuringRuler.startPos.toString());
-            view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
-            view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
-        }
+        
+        
+        break;
+    } else if (model.gorillas[ii].alive) { //only breathing if alive
+        
     }
 
-    canvas.onmousedown = function(e) {
-        measuringRuler.drawRuler = false;
-        measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
-        context.clearRect(0, 0, canvas.width, canvas.height);
-    }
-    
-    canvas.onmouseup = function(e) {
-        measuringRuler.endPos = new Posn(math.matrix([[e.x], [e.y]]));
-        //if (measuringRuler.startPos !== null && measuringRuler.endPos !== null) {
-            measuringRuler.drawRuler = true;
-        //}
-        //var totalY = Math.abs(endY - startY);
-        document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvas.width) + "m.";
-        //context.stroke();
-        //console.log("X = " + totalX + " Y = " + totalY);
-        context.beginPath();
-    }
+    // if (this.explode) {
+    //     view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
+    // }
+    // Gorilla Banana
+    // if ()
+    // Different states of Gorilla
+    view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
+}
 
-    // Call init to start the game
-    init();
+for (var ii = 0; ii < model.buildings.length; ii++) {
+    view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
+        metersToPixels(model.buildings[ii].width, canvas.width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
+}
+
+for (var ii = 0; ii < model.bananas.length; ii++) {
+    view.renderBanana(model.bananas[ii].position.getPixelX(), model.bananas[ii].position.getPixelY());
+}
+// view.renderBanana(framecount, 99);
+
+if (measuringRuler.drawRuler) {
+    console.log(measuringRuler.startPos.toString());
+    view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
+    view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
+}
+}
+
+canvas.onmousedown = function(e) {
+measuringRuler.drawRuler = false;
+measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
+context.clearRect(0, 0, canvas.width, canvas.height);
+}
+ 
+canvas.onmouseup = function(e) {
+measuringRuler.endPos = new Posn(math.matrix([[e.x], [e.y]]));
+//if (measuringRuler.startPos !== null && measuringRuler.endPos !== null) {
+    measuringRuler.drawRuler = true;
+//}
+//var totalY = Math.abs(endY - startY);
+document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvas.width) + "m.";
+//context.stroke();
+//console.log("X = " + totalX + " Y = " + totalY);
+context.beginPath();
+}
+
+// Call init to start the game
+init();
 };
 
 var form = document.getElementById("launch-form");
 function handleForm(event) {
-    event.preventDefault();
-    if (document.getElementById("angle").value !== "" && document.getElementById("velocity").value !== "") {
+event.preventDefault();
+if (document.getElementById("angle").value !== "" && document.getElementById("velocity").value !== "") {
 
-        launchSpeed = document.getElementById("velocity").value;
-        launchAngle = document.getElementById("angle").value;
+launchSpeed = document.getElementById("velocity").value;
+launchAngle = document.getElementById("angle").value;
 
-        launch = true;
-    }
-    else {
-        alert("Please enter an angle and and initial velocity");
-    }
+launch = true;
+}
+else {
+alert("Please enter an angle and and initial velocity");
+}
 }
 form.addEventListener('submit', handleForm);
