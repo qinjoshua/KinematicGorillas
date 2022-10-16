@@ -337,13 +337,6 @@ class RenderView {
             this.breatheUp = !this.breatheUp;
         }
 
-        if (this.breatheUp) {
-            this.context.drawImage(imgWinUpGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
-        }
-        else {
-            this.context.drawImage(imgWinDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
-        }
-
         switch (orientation) {
             case Orientation.LEFT:
                 if (this.breatheUp) {
@@ -384,7 +377,7 @@ class RenderView {
                     // same pos: image of gorilla without banana
                     this.context.drawImage(imgWithoutBananaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
-
+                break;
             case Orientation.RIGHT:
                 // just the image according to the boolean given
                 if (withBanana) {
@@ -396,6 +389,7 @@ class RenderView {
                     // same pos: image of gorilla without banana
                     this.context.drawImage(imgWithoutBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
+                break;
         }
     }
 
@@ -509,7 +503,7 @@ window.onload = function () {
         fpstime += dt;
         framecount++;
 
-        // Update bannana positions, check for collision
+        // Update banana positions, check for collision
         model.bananas.forEach(banana => {
             banana.velocity = math.add(banana.velocity, banana.GRAVITY);
             banana.position = new Posn(math.add(banana.position.getPosition(), banana.velocity));
@@ -563,7 +557,7 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+            view.renderGorillaBanana(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, true, model.gorillas[ii].orientation);
         }
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
