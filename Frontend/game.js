@@ -348,7 +348,7 @@ class RenderView {
                 }
                 break;
         }
-        this.tick = this.tick + 1;
+        //this.updateTick();
     }
 
 
@@ -467,7 +467,8 @@ class RenderView {
     }
 
     updateTick() {
-        this.tick = this.tick + 1;
+        this.tick = this.tick + 2;
+        console.log(this.tick);
     }
 }
 
@@ -631,8 +632,9 @@ window.onload = function () {
     }
 
     function drawFrame() {
-        // view.updateTick();
+        view.updateTick();
         // console.log(view.tick);
+        //view.updateTick();
 
         var imgBackground = document.getElementById("background");
 
