@@ -13,24 +13,28 @@ var PIXEL_TO_POSN;
 
 var GRAVITY = math.matrix([[0], [-9.8]]);
 
+var gameWidth;
+var gameHeight;
 var launch = false;
+
+function metersToPixels(meters) {
+    return meters * (gameWidth / GAME_WIDTH);
+}
 
 class Posn{
     constructor(vector) {
         this.vector = vector;
     }
 
-    getX() {
-        return this.vector.subset(math.index(0, 0));
-    }
+    getX() { return this.vector.subset(math.index(0, 0)); }
 
-    getY() {
-        return this.vector.subset(math.index(1, 0));
-    }
+    getY() { return this.vector.subset(math.index(1, 0)); }
 
-    toString() {
-        return "Posn: X = " + this.getX() + " Y = " + this.getY();
-    }
+    getPixelX() { return metersToPixels(this.getX()); }
+
+    getPixelY() { return metersToPixels(gameHeight - this.getY()); }
+
+    toString() { return "Posn: X = " + this.getX() + " Y = " + this.getY(); }
 }
 
 class BananaFactory {
@@ -129,7 +133,6 @@ class KinematicGorillaModel {
     addGorillas(playerIds) {
         var gorillas = [];
 
-        console.log(playerIds)
         for (var ii = 0; ii < playerIds.length; ii++) {
             var position;
             var orientation;
@@ -253,11 +256,9 @@ window.onload = function() {
     var model = new KinematicGorillaModel(["Adam", "Joshua"]);
 
     function resize() {
-        var container = document.getElementById("viewport-container");
         var launchForm = document.getElementById("launch-form");
         gameWidth = window.innerWidth;
         gameHeight = document.documentElement.clientHeight - launchForm.clientHeight;
-        console.log(document.documentElement.clientHeight + " " + launchForm.clientHeight + " " + gameHeight);
         canvas.width = gameWidth;
         canvas.height = gameHeight;
     }
@@ -312,9 +313,6 @@ window.onload = function() {
             framecount = 0;
         }
 
-
-        console.log(dt);
-
         // Increase time and framecount
         fpstime += dt;
         framecount++;
@@ -346,7 +344,7 @@ window.onload = function() {
 
             if (collided) {
                 // Trigger explosion at the position the banana was located formerly
-                
+
                 model.bananas.removeChild(banana);
             }
         });
