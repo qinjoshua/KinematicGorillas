@@ -320,32 +320,15 @@ class RenderView {
     }
 
     renderMeasuringRuler(startPos, endPos) {
-        // NOTE: Keep this code
-        //let arrowLength = distanceBetweenTwoPoints(startPos, endPos);
-        //var topRightEdge = calculateArrowEdgeCoordinates(ArrowEdge.TOP_RIGHT, startPos, endPos);
-        //var bottomRightEdge = calculateArrowEdgeCoordinates(ArrowEdge.BOTTOM_RIGHT, startPos, endPos);
-        //var bottomLeftEdge = calculateArrowEdgeCoordinates(ArrowEdge.BOTTOM_LEFT, startPos, endPos);
-        //var topLeftEdge = calculateArrowEdgeCoordinates(ArrowEdge.TOP_LEFT, startPos, endPos);
         this.context.lineWidth = 2;
         this.context.moveTo(startPos.getX(), startPos.getY());
         this.context.lineTo(endPos.getX(), endPos.getY());
-        //this.context.lineTo(topRightEdge.getX(), topRightEdge.getY());
-        //this.context.moveTo(endPos.getX(), endPos.getY());
-        //this.context.lineTo(bottomRightEdge.getX(), bottomRightEdge.getY());
-        //this.context.moveTo(startPos.getX(), startPos.getY());
-        //this.context.lineTo(bottomLeftEdge.getX(), bottomLeftEdge.getY());
-        //this.context.moveTo(startPos.getX(), startPos.getY());
-        //this.context.lineTo(topLeftEdge.getX(), topLeftEdge.getY());
-        //this.context.lineTo(startPos.getX() + arrowLength, startPos.getX());
-        //this.context.lineTo(arrowX, arrowTopY);
-        //this.context.moveTo(startPos.getX() + arrowLength, startPos.getX());
-        //this.context.lineTo(arrowX, arrowBottomY);
         this.context.strokeStyle = "red";
         this.context.stroke();
     }
 
     renderCoordinates(startPos, endPos) {
-        this.context.font = "20px Georgia";
+        this.context.font = "bold 20px Georgia";
         this.context.fillStyle = "black";
         this.context.fillText("(" + startPos.getX() + ", " + startPos.getY() + ")", startPos.getX() - 50, startPos.getY(), 50);
         this.context.fillText("(" + endPos.getX() + ", " + endPos.getY() + ")", endPos.getX(), endPos.getY(), 50);
@@ -383,42 +366,6 @@ function distanceBetweenTwoPoints(pos1, pos2) {
     
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
-
-// NOTE: Keep this code!
-/*function calculateArrowEdgeCoordinates(arrowEdge, startPos, endPos) {
-    const length = 10;
-    const edgeAngle = 45;
-    //console.log("Adjacent = " + Math.abs(startPos.getX() - endPos.getX()));
-    //console.log("Hypothenus = " + distanceBetweenTwoPoints(startPos, endPos));
-    const arrowAngle = Math.acos(Math.abs(startPos.getX() - endPos.getX()) / distanceBetweenTwoPoints(startPos, endPos)) * 180 / Math.PI;
-
-    console.log("ArrowAngle " + arrowAngle);
-
-    switch (arrowEdge) {
-        case ArrowEdge.TOP_RIGHT:
-            var x = endPos.getX() + length * Math.cos((135 + arrowAngle - 45) * Math.PI / 180);
-            var y = endPos.getY() - length * Math.sin((135 + arrowAngle - 45) * Math.PI / 180);
-            return new Posn(math.matrix([[x], [y]]));
-            break;
-        case ArrowEdge.BOTTOM_RIGHT:
-            var x = endPos.getX() + length * Math.cos((225 + arrowAngle - 45) * Math.PI / 180);
-            var y = endPos.getY() - length * Math.sin((225 + arrowAngle - 45) * Math.PI / 180);
-            return new Posn(math.matrix([[x], [y]]));
-            break;
-        case ArrowEdge.BOTTOM_LEFT:
-            var x = startPos.getX() + length * Math.cos((315 + arrowAngle - 45) * Math.PI / 180);
-            var y = startPos.getY() - length * Math.sin((315 + arrowAngle - 45) * Math.PI / 180);
-            return new Posn(math.matrix([[x], [y]]));
-            break;
-        case ArrowEdge.TOP_LEFT:
-            var x = startPos.getX() + length * Math.cos((45 + arrowAngle - 45) * Math.PI / 180);
-            var y = startPos.getY() - length * Math.sin((45 + arrowAngle - 45) * Math.PI / 180);
-            return new Posn(math.matrix([[x], [y]]));
-            break;
-        default:
-            return
-    }   
-}*/
 
 var worldGame = new KinematicGorillaModel(["Adam", "Joshua"]);
 console.log(worldGame.gorillas[0].position.toString());
