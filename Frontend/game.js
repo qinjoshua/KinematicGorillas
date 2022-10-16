@@ -655,8 +655,8 @@ window.onload = function () {
                 } else {
                     view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
                 }
-            } else if (LAUNCH_TIME !== null && (view.tick - LAUNCH_TIME > 60 * 5)) {
-                view.renderGorillaBanana(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+                // } else if (LAUNCH_TIME !== null && (view.tick - LAUNCH_TIME > 60 * 5)) {
+                // view.renderGorillaBanana(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
             } else {
                 view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
             }
