@@ -596,7 +596,7 @@ window.onload = function () {
 
             if (collided) {
                 // Trigger explosion at the position the banana was located formerly
-                model.bananas.splice(bi);
+                model.bananas.splice(bi, 1);
             }
         }
 
