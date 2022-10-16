@@ -15,6 +15,9 @@ var GRAVITY = math.matrix([[0], [-9.8]]);
 
 var gameWidth;
 var gameHeight;
+
+var launchAngle;
+var launchSpeed;
 var launch = false;
 
 function metersToPixels(meters) {
@@ -32,7 +35,9 @@ class Posn{
 
     getPixelX() { return metersToPixels(this.getX()); }
 
-    getPixelY() { return metersToPixels(gameHeight - this.getY()); }
+    getPixelY() { return metersToPixels(GAME_HEIGHT - this.getY()); }
+
+    getPosition() { return this.vector; }
 
     toString() { return "Posn: X = " + this.getX() + " Y = " + this.getY(); }
 }
@@ -71,6 +76,13 @@ class Gorilla {
         this.shotsLeft = shots;
         this.alive = true;
     }
+
+    containsPoint(pointPosn) {
+        return this.position.getX() >= pointPosn.getX() &&
+            this.position.getY() >= pointPosn.getY() &&
+            this.position.getX() <= pointPosn.getX() + this.width &&
+            this.position.getY() <= pointPosn.getY() - this.height;
+    }
 }
 
 class Building {
@@ -89,10 +101,10 @@ class Building {
 }
 
 class KinematicGorillaModel {
-    constructor(playerIds) {
+    constructor(playerIDs) {
         this.buildings = this.createSkyline();
-        // TODO: Turn array into Map of PlayerID->Gorilla
-        this.gorillas = this.addGorillas(playerIds);
+        // TODO: Turn array into Map of playerID->Gorilla
+        this.gorillas = this.addGorillas(playerIDs);
         this.bananas = [];
     }
 
@@ -130,10 +142,10 @@ class KinematicGorillaModel {
     }
 
     // Adds Gorillas representing players to the game
-    addGorillas(playerIds) {
+    addGorillas(playerIDs) {
         var gorillas = [];
 
-        for (var ii = 0; ii < playerIds.length; ii++) {
+        for (var ii = 0; ii < playerIDs.length; ii++) {
             var position;
             var orientation;
             var width = GAME_WIDTH * GORILLA_WIDTH_FACTOR;
@@ -156,18 +168,16 @@ class KinematicGorillaModel {
                     break;
             }
 
-            //console.log(position);
-
-            var gorilla = new Gorilla(position, orientation, width, height, playerIds[ii], MAX_SHOTS);
+            var gorilla = new Gorilla(position, orientation, width, height, playerIDs[ii], MAX_SHOTS);
             gorillas.push(gorilla);
         }
 
         return gorillas;
     }
 
-    addBanana(playerId, speed, angle) {
+    addBanana(playerID, speed, angle) {
         for (var ii = 0; ii < this.gorillas.length; ii++) {
-            if (this.gorillas[ii].playerId === playerId) {
+            if (this.gorillas[ii].playerID === playerID) {
                 var gorilla = this.gorillas[ii]
 
                 var bananaOrigin;
@@ -229,7 +239,6 @@ class RenderView {
         this.context.font = "24px Verdana";
         this.context.fillText("Speed: " + this.bananaThrow, 100, 50);
         this.bananaThrow = this.bananaThrow + 1;
-        console.log(this.bananaThrow)
         if (x % 2 === 0) {
             this.context.fillStyle = "#000000";
             this.context.fillRect(x, y, 40, 60);
@@ -244,10 +253,6 @@ class RenderView {
 function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
-
-var worldGame = new KinematicGorillaModel(["Adam", "Joshua"]);
-console.log(worldGame.gorillas[0].position.toString());
-console.log(worldGame.gorillas[1].position.toString());
 
 window.onload = function() {
     // Get the canvas and context
@@ -273,7 +278,7 @@ window.onload = function() {
     var fps = 0;
 
     // TODO: we've got to be able to set playerID somehow
-    var playerID = "";
+    var playerID = "Adam";
 
     // Initialize the game
     function init() {
@@ -318,41 +323,43 @@ window.onload = function() {
         framecount++;
 
         // Update bannana positions, check for collision
-        model.bananas.forEach(banana => {
-            banana.velocity = math.add(banana.velocity, math.multiply(banana.GRAVITY, dt));
+        
+        for (var bi = 0; bi < model.bananas.length; bi++) {
+            let banana = model.bananas[bi];
+
+            banana.velocity = math.add(banana.velocity, math.multiply(GRAVITY, dt));
             banana.position = new Posn(math.add(banana.position.getPosition(), math.multiply(banana.velocity, dt)));
 
             // Check for collisions
             var collided = false;
 
             model.buildings.forEach(building => {
-                if (building.containsPoint()) {
+                if (building.containsPoint(banana.position)) {
                     collided = true;
                 }
             });
 
             model.gorillas.forEach(gorilla => {
-                if (gorilla.containsPoint()) {
+                if (gorilla.containsPoint(banana.position)) {
                     gorilla.alive = false;
                     collided = true;
                 }
             });
 
-            if (banana.position.getX() > GAME_WIDTH || banana.position.getY() < GAME_WIDTH) {
+            if (banana.position.getX() > GAME_WIDTH || banana.position.getX() > GAME_WIDTH < 0) {
                 collided = true;
             }
 
             if (collided) {
                 // Trigger explosion at the position the banana was located formerly
-
-                model.bananas.removeChild(banana);
+                model.bananas.splice(bi);
             }
-        });
+        }
 
         // Launch a banana
         if (launch) {
             launch = false;
-            this.model.addBanana(playerID);
+            model.addBanana(playerID, launchSpeed, launchAngle);
         }
     }
 
@@ -387,10 +394,14 @@ var form = document.getElementById("launch-form");
 function handleForm(event) {
     event.preventDefault();
     if (document.getElementById("angle").value !== "" && document.getElementById("velocity").value !== "") {
-        alert("Please enter an angle and and initial velocity");
+
+        launchSpeed = document.getElementById("velocity").value;
+        launchAngle = document.getElementById("angle").value;
+
+        launch = true;
     }
     else {
-        launch = true;
+        alert("Please enter an angle and and initial velocity");
     }
 } 
 form.addEventListener('submit', handleForm);
