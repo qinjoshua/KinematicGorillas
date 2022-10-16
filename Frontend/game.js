@@ -20,8 +20,21 @@ var launchAngle;
 var launchSpeed;
 var launch = false;
 
+var socket = io();
+
 function metersToPixels(meters) {
     return meters * (gameWidth / GAME_WIDTH);
+}
+
+function getModel() {
+    var model;
+    fetch("/gameState?name=")
+        // Converting received data to JSON
+        .then(response => response.json())
+        .then(json => {
+            model = json;
+    });
+    return model;
 }
 
 class Posn{
@@ -342,6 +355,7 @@ window.onload = function() {
             model.gorillas.forEach(gorilla => {
                 if (gorilla.containsPoint(banana.position)) {
                     gorilla.alive = false;
+                    socket.emit('lost', gorilla.playerID);
                     collided = true;
                 }
             });
@@ -386,6 +400,21 @@ window.onload = function() {
        // view.renderBanana(99,99)
     }
 
+    socket.on('launch', function(launch) {
+        launchSpeed = launch.launchSpeed;
+        launchAngle = launch.launchAngle;
+
+        launch = true;
+    });
+
+    // socket.on('lost', function(loser) {
+    //     model.gorillas.forEach( gorilla => {
+    //         if (gorilla.playerID === loser) {
+    //             gorilla.alive = false;
+    //         }
+    //     });
+    // });
+
     // Call init to start the game
     init();
 };
@@ -394,6 +423,10 @@ var form = document.getElementById("launch-form");
 function handleForm(event) {
     event.preventDefault();
     if (document.getElementById("angle").value !== "" && document.getElementById("velocity").value !== "") {
+        socket.emit('launch', {
+            launchSpeed: document.getElementById("velocity").value,
+            launchAngle: document.getElementById("angle").value
+        });
 
         launchSpeed = document.getElementById("velocity").value;
         launchAngle = document.getElementById("angle").value;
@@ -403,5 +436,6 @@ function handleForm(event) {
     else {
         alert("Please enter an angle and and initial velocity");
     }
-} 
+}
+
 form.addEventListener('submit', handleForm);

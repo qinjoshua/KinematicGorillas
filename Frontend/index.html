@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gorillamatics Lobby</title>
+        <style>
+            /* body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+            #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+            #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+            #input:focus { outline: none; }
+            #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+            #messages { list-style-type: none; margin: 0; padding: 0; }
+            #messages > li { padding: 0.5rem 1rem; }
+            #messages > li:nth-child(odd) { background: #efefef; } */
+        </style>
+    </head>
+    <body>
+        <form action="/enterLobby" method="post">
+            <div>
+                <label for="name">Name</label><br>
+                <input type="text" id="name" name="name"><br>
+            </div>
+            <div>
+                <button type="submit" value="Submit">Enter Game</button>
+            </div>
+        </form>
+    </body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var nameInput = document.getElementById('name');
+
+        // When we receive the socket message to start a game, we redirect to the game page
+        socket.on('start game', function(msg) {
+            window.location.href = '/game?name=';
+        });
+
+        form.addEventListener('submit', function(e) {
+            fetch("enterLobby", {
+                method: 'post',
+                body: {name: nameInput.value},
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then((response) => {
+                socket.emit('game start');
+            }).then((res) => {
+                if (res.status === 201) {
+                    console.log("Post successfully created!")
+                }
+            }).catch((error) => {
+                console.log(error)
+            })
+        });
+    </script>
+    <!-- <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      var name = document.getElementById('name');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('enterLobby', input.value);
+          // Some logic to see lobby members instead of input form
+          input.value = '';
+        }
+      });
+
+      socket.on('chat message', function(msg) {
+        var item = document.createElement('li');
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script> -->
+</html>
