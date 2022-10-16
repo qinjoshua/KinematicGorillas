@@ -231,19 +231,38 @@ class RenderView {
     }
 
 
-    renderBanana(x, y, orientation) {
-        var banana = document.getElementById("banana-img");
-        var bananaLeft = document.getElementById("banana-img-l");
+    renderBanana(x, y) {
         var canvas = document.getElementById("viewport");
 
-        switch (orientation) {
-            case Orientation.LEFT:
-                this.context.drawImage(bananaLeft, x, y, 0.01 * canvas.width, 0.025 * canvas.height);
-                break;
-            case Orientation.RIGHT:
-                this.context.drawImage(banana, x, y, 0.01 * canvas.width, 0.025 * canvas.height);
+        if (this.tick % 48 >= 0 && this.tick % 48 < 8) {
+            var banana = document.getElementById("banana1-img");
+            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
         }
+        else if (this.tick % 48 >= 8 && this.tick % 48 < 16) {
+            var banana = document.getElementById("banana2-img");
+            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
 
+        }
+        else if (this.tick % 48 >= 16 && this.tick % 48 < 24) {
+            var banana = document.getElementById("banana3-img");
+            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+
+        }
+        else if (this.tick % 48 >= 24 && this.tick % 48 < 32) {
+            var banana = document.getElementById("banana4-img");
+            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+
+        }
+        else if (this.tick % 48 >= 32 && this.tick % 48 < 40) {
+            var banana = document.getElementById("banana5-img");
+            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+
+        }
+        else {
+            var banana = document.getElementById("banana6-img");
+            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+
+        }
     }
 
     renderGorilla(x, y, banana, orientation) {
