@@ -76,6 +76,9 @@ class Building {
         this.width = width;
         this.height = height;
         this.position = position;
+        var windowRandom = Math.floor(Math.random() * 3);
+        var windowStyle = ["window-1", "window-2", "window-3"];
+        this.window = windowStyle[windowRandom];
     }
 
     containsPoint(pointPosn) {
@@ -205,10 +208,10 @@ class RenderView {
     }
 
     // id of window should be used
-    renderBuilding(x, y, width, height) {
+    renderBuilding(x, y, width, height, window) {
         //put window function here
         var canvas = document.getElementById("viewport");
-        var imgWindow = document.getElementById("window-1");
+        var imgWindow = document.getElementById(window);
         this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
 
         var columns = Math.round(width / (0.04 * canvas.width));
@@ -226,7 +229,7 @@ class RenderView {
     renderBuildings(buildings) {
         for (let i = 0; i < buildings.size(); i++) {
             let building = buildings[i];
-            this.renderBuilding(building.position.getX(), building.position.getY(), building.width, building.height);
+            this.renderBuilding(building.position.getX(), building.position.getY(), building.width, building.height, building.window);
         }
     }
 
@@ -393,7 +396,7 @@ class RenderView {
         }
     }
 
-    renderExplosion(x,y) {
+    renderExplosion(x, y) {
         var canvas = document.getElementById("viewport");
 
         if (this.tick % 80 >= 0 && this.tick % 80 < 16) {
@@ -557,15 +560,15 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            view.renderGorillaBanana(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, true, model.gorillas[ii].orientation);
+            view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
         }
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
             view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
-                metersToPixels(model.buildings[ii].width), metersToPixels(model.buildings[ii].height))
+                metersToPixels(model.buildings[ii].width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window)
         }
 
-        view.renderBanana(framecount, 99, Orientation.RIGHT);
+        view.renderBanana(framecount, 99);
     }
 
     var buttonDownTest = false;
