@@ -19,6 +19,7 @@ var gameHeight;
 var launchAngle;
 var launchSpeed;
 var launch = false;
+var LAUNCH_TIME = null;
 
 function metersToPixels(meters) {
     return meters * (gameWidth / GAME_WIDTH);
@@ -113,6 +114,7 @@ class KinematicGorillaModel {
         // TODO: Turn array into Map of playerID->Gorilla
         this.gorillas = this.addGorillas(playerIDs);
         this.bananas = [];
+        this.roundOver = false;
     }
 
     // Randomly generates a skyline of buildings of different heights and widths
@@ -323,11 +325,14 @@ class RenderView {
 
         if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
+            console.log("BREATHE");
+
         }
 
         switch (orientation) {
             case Orientation.LEFT:
                 if (this.breatheUp) {
+                    console.log("hi");
                     this.context.drawImage(imgBreatheUpGorillaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 else {
@@ -412,6 +417,8 @@ class RenderView {
                 }
                 break;
         }
+        this.tick = this.tick + 1;
+
     }
 
     renderExplosion(x, y) {
@@ -458,6 +465,10 @@ class RenderView {
         this.context.fillText("(" + Math.round(startPos.getX() * GAME_WIDTH / width) + ", " + Math.round(startPos.getY() * GAME_WIDTH / width) + ")", startPos.getX() - 50, startPos.getY(), 50);
         this.context.fillText("(" + Math.round(endPos.getX() * GAME_WIDTH / width) + ", " + Math.round(endPos.getY() * GAME_WIDTH / width) + ")", endPos.getX(), endPos.getY(), 50);
     }
+
+    updateTick() {
+        this.tick = this.tick + 1;
+    }
 }
 
 const ArrowEdge = {
@@ -488,7 +499,7 @@ function getRndInteger(min, max) {
 function distanceBetweenTwoPoints(pos1, pos2) {
     let x = pos2.getX() - pos1.getX();
     let y = pos2.getY() - pos1.getY();
-    
+
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
@@ -589,6 +600,8 @@ window.onload = function () {
                     console.log("collided with gorilla " + gorilla.position.getX() + " " + gorilla.position.getY());
                     gorilla.alive = false;
                     collided = true;
+                    model.roundOver = true;
+                    context.clearRect(0, 0, canvas.width, canvas.height);
                 }
             });
 
@@ -606,6 +619,8 @@ window.onload = function () {
         if (launch) {
             launch = false;
             model.addBanana(playerID, launchSpeed, launchAngle);
+            view.throwing = true;
+            LAUNCH_TIME = view.tick;
         }
     }
 
@@ -616,6 +631,8 @@ window.onload = function () {
     }
 
     function drawFrame() {
+        // view.updateTick();
+        // console.log(view.tick);
 
         var imgBackground = document.getElementById("background");
 
@@ -632,21 +649,44 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            // Gorilla Wins
-            if (!model.gorillas[ii].alive) {
-                //render explosion
-                view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
-                // the other gorilla wins
-                let winningGorilla = model.gorillas.splice(ii, 1)[0];
-                view.renderGorillaWin(winningGorilla.position.getPixelX() - 20, winningGorilla.position.getPixelY() + 10, winningGorilla.orientation);
-            } else if (model.gorillas[ii].alive) { //only breathing if alive
+            if (model.roundOver) {
+                if (model.gorillas[ii].alive) {
+                    view.renderGorillaWin(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+                } else {
+                    view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
+                }
+            } else if (LAUNCH_TIME !== null && (view.tick - LAUNCH_TIME > 60 * 5)) {
+                view.renderGorillaBanana(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+            } else {
                 view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
             }
+        }
+
+        /*for (var ii = 0; ii < model.gorillas.length; ii++) {
+            // Gorilla Wins
+            if (!model.gorillas[ii].alive) {
+                // the other gorilla wins
+                let winningGorilla;
+                if (ii === 0) {
+                    winningGorilla = model.gorillas[1];
+                } else {
+                    winningGorilla = model.gorillas[0];
+                }
+                
+                
+                break;
+            } else if (model.gorillas[ii].alive) { //only breathing if alive
+                
+            }
+
+            // if (this.explode) {
+            //     view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
+            // }
             // Gorilla Banana
             // if ()
             // Different states of Gorilla
             // view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
-        }
+        }*/
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
             view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
@@ -663,18 +703,21 @@ window.onload = function () {
             view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
             view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
         }
+
+        // view.updateTick();
+        // console.log(view.tick);
     }
 
-    canvas.onmousedown = function(e) {
+    canvas.onmousedown = function (e) {
         measuringRuler.drawRuler = false;
         measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
-    
-    canvas.onmouseup = function(e) {
+
+    canvas.onmouseup = function (e) {
         measuringRuler.endPos = new Posn(math.matrix([[e.x], [e.y]]));
         //if (measuringRuler.startPos !== null && measuringRuler.endPos !== null) {
-            measuringRuler.drawRuler = true;
+        measuringRuler.drawRuler = true;
         //}
         //var totalY = Math.abs(endY - startY);
         document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvas.width) + "m.";
