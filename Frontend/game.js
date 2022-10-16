@@ -78,10 +78,10 @@ class Gorilla {
     }
 
     containsPoint(pointPosn) {
-        return this.position.getX() >= pointPosn.getX() &&
+        return this.position.getX() <= pointPosn.getX() &&
             this.position.getY() >= pointPosn.getY() &&
-            this.position.getX() <= pointPosn.getX() + this.width &&
-            this.position.getY() <= pointPosn.getY() - this.height;
+            this.position.getX() + this.width >= pointPosn.getX() &&
+            this.position.getY() - this.height <= pointPosn.getY();
     }
 }
 
@@ -96,10 +96,10 @@ class Building {
     }
 
     containsPoint(pointPosn) {
-        return this.position.getX() >= pointPosn.getX() &&
+        return this.position.getX() <= pointPosn.getX() &&
             this.position.getY() >= pointPosn.getY() &&
-            this.position.getX() <= pointPosn.getX() + this.width &&
-            this.position.getY() <= pointPosn.getY() - this.height;
+            this.position.getX() + this.width >= pointPosn.getX() &&
+            this.position.getY() - this.height <= pointPosn.getY();
     }
 }
 
@@ -582,6 +582,7 @@ window.onload = function () {
 
             model.gorillas.forEach(gorilla => {
                 if (gorilla.containsPoint(banana.position)) {
+                    console.log("collided with gorilla " + gorilla.position.getX() + " " + gorilla.position.getY());
                     gorilla.alive = false;
                     collided = true;
                 }
