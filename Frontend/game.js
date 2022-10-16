@@ -498,8 +498,28 @@ window.onload = function () {
             view.renderGorillaBreathing(model.gorillas[ii].position.getX(), model.gorillas[ii].position.getY(), model.gorillas[ii].orientation);
         }
 
-        view.renderBanana(100, 50, Orientation.RIGHT);
+        view.renderBanana(framecount, 99, Orientation.RIGHT);
+    }
 
+    var buttonDownTest = false;
+    var startX;
+    var endX;
+    var startY;
+    var endY;
+
+    canvas.onmousedown = function (e) {
+        startX = e.x;
+        startY = e.y;
+        buttonDownTest = true;
+    }
+
+    canvas.onmouseup = function (e) {
+        endX = e.x;
+        endY = e.y;
+        buttonDownTest = false;
+        var totalX = Math.abs(endX - startX);
+        var totalY = Math.abs(endY - startY);
+        console.log("X = " + totalX + " Y = " + totalY);
     }
 
     // Call init to start the game
