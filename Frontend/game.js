@@ -1,7 +1,7 @@
 let GAME_WIDTH = 200;
 let GAME_HEIGHT = 100;
 
-let GORILLA_WIDTH_FACTOR = 0.05;
+let GORILLA_WIDTH_FACTOR = 0.025;
 let GORILLA_HEIGHT_FACTOR = 0.1;
 
 let LEFT_PLAYER_OPEN_POS = [];
@@ -19,6 +19,11 @@ var gameHeight;
 var launchAngle;
 var launchSpeed;
 var launch = false;
+var LAUNCH_TIME = null;
+
+function metersToPixels(meters) {
+    return meters * (gameWidth / GAME_WIDTH);
+}
 
 function metersToPixels(meters) {
     return meters * (gameWidth / GAME_WIDTH);
@@ -35,7 +40,7 @@ class Posn {
 
     getPixelX() { return metersToPixels(this.getX()); }
 
-    getPixelY() { return gameHeight - metersToPixels(this.getY()); }
+    getPixelY() { return metersToPixels(GAME_HEIGHT - this.getY()); }
 
     getPosition() { return this.vector; }
 
@@ -109,6 +114,7 @@ class KinematicGorillaModel {
         // TODO: Turn array into Map of playerID->Gorilla
         this.gorillas = this.addGorillas(playerIDs);
         this.bananas = [];
+        this.roundOver = false;
     }
 
     // Randomly generates a skyline of buildings of different heights and widths
@@ -226,16 +232,14 @@ class RenderView {
         //put window function here
         var canvas = document.getElementById("viewport");
         var imgWindow = document.getElementById(window);
-        var COLUMN_HEIGHT_WIDTH_FRACTION = 0.04;
+        this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
 
-        this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
-
-        var columns = Math.ceil(width / (0.04 * canvas.width));
-        var rows = Math.ceil(height / (COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width));
+        var columns = Math.round(width / (0.04 * canvas.width));
+        var rows = Math.round(height / (0.1 * canvas.height));
 
         for (let row = 0; row < rows; row++) {
             for (let column = 0; column < columns; column++) {
-                this.context.drawImage(imgWindow, x + column * 0.04 * canvas.width, y + row * COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
+                this.context.drawImage(imgWindow, x + column * 0.04 * canvas.width, y + row * 0.1 * canvas.height, 0.04 * canvas.width, 0.1 * canvas.height);
             }
         }
         // this.context.fillStyle = "#000000";
@@ -284,15 +288,15 @@ class RenderView {
         }
     }
 
-    renderGorilla(x, y, banana, orientation, width, height) {
+    renderGorilla(x, y, banana, orientation) {
         if (banana) {
             // with certain number of ticks
-            this.renderGorillaBanana(x, y, true, orientation, width, height);
+            this.renderGorillaBanana(x, y, true, orientation);
             // with certain number of ticks
-            this.renderGorillaBanana(x, y, false, orientation, width, height);
+            this.renderGorillaBanana(x, y, false, orientation);
         }
         else {
-            this.renderGorillaBreathing(x, y, orientation, width, height);
+            this.renderGorillaBreathing(x, y, orientation)
         }
     }
 
@@ -312,7 +316,7 @@ class RenderView {
         this.context.setTransform(1, 0, 0, 1, 0, 0);
     }
 
-    renderGorillaBreathing(x, y, orientation, width, height) {
+    renderGorillaBreathing(x, y, orientation) {
         var imgBreatheUpGorilla = document.getElementById("bu-img");
         var imgBreatheDownGorilla = document.getElementById("bd-img");
         var imgBreatheUpGorillaLeft = document.getElementById("bu-img-l");
@@ -321,31 +325,34 @@ class RenderView {
 
         if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
+            console.log("BREATHE");
+
         }
 
         switch (orientation) {
             case Orientation.LEFT:
                 if (this.breatheUp) {
-                    this.context.drawImage(imgBreatheUpGorillaLeft, x, y, width, height);
+                    console.log("hi");
+                    this.context.drawImage(imgBreatheUpGorillaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 else {
-                    this.context.drawImage(imgBreatheDownGorillaLeft, x, y, width, height);
+                    this.context.drawImage(imgBreatheDownGorillaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 break;
             case Orientation.RIGHT:
                 if (this.breatheUp) {
-                    this.context.drawImage(imgBreatheUpGorilla, x, y, width, height);
+                    this.context.drawImage(imgBreatheUpGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 else {
-                    this.context.drawImage(imgBreatheDownGorilla, x, y, width, height);
+                    this.context.drawImage(imgBreatheDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 break;
         }
-        this.tick = this.tick + 1;
+        //this.updateTick();
     }
 
 
-    renderGorillaWin(x, y, orientation, width, height) {
+    renderGorillaWin(x, y, orientation) {
         var imgWinUpGorilla = document.getElementById("win1-img");
         var imgWinDownGorilla = document.getElementById("win2-img");
         var imgWinUpGorillaLeft = document.getElementById("win1-img-l");
@@ -359,25 +366,25 @@ class RenderView {
         switch (orientation) {
             case Orientation.LEFT:
                 if (this.breatheUp) {
-                    this.context.drawImage(imgWinUpGorillaLeft, x, y, width, height);
+                    this.context.drawImage(imgWinUpGorillaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 else {
-                    this.context.drawImage(imgWinDownGorillaLeft, x, y, width, height);
+                    this.context.drawImage(imgWinDownGorillaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 break;
             case Orientation.RIGHT:
                 if (this.breatheUp) {
-                    this.context.drawImage(imgWinUpGorilla, x, y, width, height);
+                    this.context.drawImage(imgWinUpGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 else {
-                    this.context.drawImage(imgWinDownGorilla, x, y, width, height);
+                    this.context.drawImage(imgWinDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 break;
         }
         this.tick = this.tick + 1;
     }
 
-    renderGorillaBanana(x, y, withBanana, orientation, width, height) {
+    renderGorillaBanana(x, y, withBanana, orientation) {
         var imgWithBanana = document.getElementById("wb-img");
         var imgWithoutBanana = document.getElementById("win1-img");
         var imgWithBananaLeft = document.getElementById("wb-img-l");
@@ -389,27 +396,29 @@ class RenderView {
                 // just the image according to the boolean given
                 if (withBanana) {
                     // image of gorilla holding banana
-                    this.context.drawImage(imgWithBananaLeft, x, y, width, height);
+                    this.context.drawImage(imgWithBananaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
 
                 }
                 else {
                     // same pos: image of gorilla without banana
-                    this.context.drawImage(imgWithoutBananaLeft, x, y, width, height);
+                    this.context.drawImage(imgWithoutBananaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 break;
             case Orientation.RIGHT:
                 // just the image according to the boolean given
                 if (withBanana) {
                     // image of gorilla holding banana
-                    this.context.drawImage(imgWithBanana, x, y, width, height);
+                    this.context.drawImage(imgWithBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
 
                 }
                 else {
                     // same pos: image of gorilla without banana
-                    this.context.drawImage(imgWithoutBanana, x, y, width, height);
+                    this.context.drawImage(imgWithoutBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 break;
         }
+        this.tick = this.tick + 1;
+
     }
 
     renderExplosion(x, y) {
@@ -456,6 +465,11 @@ class RenderView {
         this.context.fillText("(" + Math.round(startPos.getX() * GAME_WIDTH / width) + ", " + Math.round(startPos.getY() * GAME_WIDTH / width) + ")", startPos.getX() - 50, startPos.getY(), 50);
         this.context.fillText("(" + Math.round(endPos.getX() * GAME_WIDTH / width) + ", " + Math.round(endPos.getY() * GAME_WIDTH / width) + ")", endPos.getX(), endPos.getY(), 50);
     }
+
+    updateTick() {
+        this.tick = this.tick + 1;
+        console.log(this.tick);
+    }
 }
 
 const ArrowEdge = {
@@ -486,7 +500,7 @@ function getRndInteger(min, max) {
 function distanceBetweenTwoPoints(pos1, pos2) {
     let x = pos2.getX() - pos1.getX();
     let y = pos2.getY() - pos1.getY();
-    
+
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
@@ -587,6 +601,8 @@ window.onload = function () {
                     console.log("collided with gorilla " + gorilla.position.getX() + " " + gorilla.position.getY());
                     gorilla.alive = false;
                     collided = true;
+                    model.roundOver = true;
+                    context.clearRect(0, 0, canvas.width, canvas.height);
                 }
             });
 
@@ -596,7 +612,7 @@ window.onload = function () {
 
             if (collided) {
                 // Trigger explosion at the position the banana was located formerly
-                model.bananas.splice(bi, 1);
+                model.bananas.splice(bi);
             }
         }
 
@@ -604,6 +620,8 @@ window.onload = function () {
         if (launch) {
             launch = false;
             model.addBanana(playerID, launchSpeed, launchAngle);
+            view.throwing = true;
+            LAUNCH_TIME = view.tick;
         }
     }
 
@@ -614,15 +632,16 @@ window.onload = function () {
     }
 
     function drawFrame() {
+        // console.log(view.tick);
 
         var imgBackground = document.getElementById("background");
 
         // Draw background and a border
-        context.fillStyle = "#67d8da";
+        context.fillStyle = "#d0d0d0";
         context.fillRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = "#67d8da";
+        context.fillStyle = "#0ce6ff";
         context.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
-        context.drawImage(imgBackground, 0, canvas.height - (canvas.width * (imgBackground.height / imgBackground.width)), canvas.width, canvas.width * (imgBackground.height / imgBackground.width));
+        context.drawImage(imgBackground, 0, 0, canvas.width, canvas.height);
 
         // Display fps
         context.fillStyle = "#ffffff";
@@ -630,13 +649,51 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            // Different states of Gorilla
-            view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
+            if (model.roundOver) {
+                if (model.gorillas[ii].alive) {
+                    view.renderGorillaWin(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation);
+                } else {
+                    view.renderExplosion(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY());
+                }
+                // } else if (LAUNCH_TIME !== null && (view.tick - LAUNCH_TIME > 60 * 5)) {
+                // view.renderGorillaBanana(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+            } else {
+                view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation);
+            };
+            view.updateTick();
         }
+        //view.updateTick();
+
+
+        /*for (var ii = 0; ii < model.gorillas.length; ii++) {
+            // Gorilla Wins
+            if (!model.gorillas[ii].alive) {
+                // the other gorilla wins
+                let winningGorilla;
+                if (ii === 0) {
+                    winningGorilla = model.gorillas[1];
+                } else {
+                    winningGorilla = model.gorillas[0];
+                }
+                
+                
+                break;
+            } else if (model.gorillas[ii].alive) { //only breathing if alive
+                
+            }
+
+            // if (this.explode) {
+            //     view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
+            // }
+            // Gorilla Banana
+            // if ()
+            // Different states of Gorilla
+            // view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+        }*/
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
             view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
-                metersToPixels(model.buildings[ii].width, canvas.width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
+                metersToPixels(model.buildings[ii].width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
         }
 
         for (var ii = 0; ii < model.bananas.length; ii++) {
@@ -649,18 +706,21 @@ window.onload = function () {
             view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
             view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
         }
+
+        // view.updateTick();
+        // console.log(view.tick);
     }
 
-    canvas.onmousedown = function(e) {
+    canvas.onmousedown = function (e) {
         measuringRuler.drawRuler = false;
         measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
-    
-    canvas.onmouseup = function(e) {
+
+    canvas.onmouseup = function (e) {
         measuringRuler.endPos = new Posn(math.matrix([[e.x], [e.y]]));
         //if (measuringRuler.startPos !== null && measuringRuler.endPos !== null) {
-            measuringRuler.drawRuler = true;
+        measuringRuler.drawRuler = true;
         //}
         //var totalY = Math.abs(endY - startY);
         document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvas.width) + "m.";
