@@ -235,27 +235,23 @@ class RenderView {
         }
     }
 
-    renderGorillaBreathing(x, y) {
+    renderGorillaBreathing(x, y, orientation) {
         var imgBreatheUpGorilla = document.getElementById("bu-img");
         var imgBreatheDownGorilla = document.getElementById("bd-img");
         var canvas = document.getElementById("viewport");
 
-        // this.context.fillStyle = "#000000";
-        // this.context.font = "24px Verdana";
-        // this.context.fillText("Throws: " + this.tick, 100, 50);
         if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
         }
 
         if (this.breatheUp) {
-            // this.context.fillStyle = "#000000";
-            // this.context.fillRect(x, y, 40, 60);
             this.context.drawImage(imgBreatheUpGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
         }
         else {
-            // this.context.fillStyle = "#ffffff";
-            // this.context.fillRect(x, y, 40, 60);
             this.context.drawImage(imgBreatheDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+        }
+        if (orientation === Orientation.LEFT) {
+            this.context.scale(-1, 1);
         }
         this.tick = this.tick + 1;
     }
@@ -439,12 +435,12 @@ window.onload = function () {
         //console.log("hello");
 
         // var view = new RenderView()
-        // for (var ii = 0; ii < model.gorillas.length; ii++) {
-        //     //console.log("hi");
-        //     //console.log(model.gorillas[ii].position.getX());
-        //     //console.log(model.gorillas[ii].position.getY());
-        //     view.renderGorillaBreathing(model.gorillas[ii].position.getX(), model.gorillas[ii].position.getY());
-        // }
+        for (var ii = 0; ii < model.gorillas.length; ii++) {
+            //console.log("hi");
+            //console.log(model.gorillas[ii].position.getX());
+            //console.log(model.gorillas[ii].position.getY());
+            view.renderGorillaBreathing(model.gorillas[ii].position.getX(), model.gorillas[ii].position.getY(), model.gorillas[ii].orientation);
+        }
 
         view.renderBanana(framecount, 99);
 
