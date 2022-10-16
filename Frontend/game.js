@@ -82,10 +82,10 @@ class Gorilla {
     }
 
     containsPoint(pointPosn) {
-        return this.position.getX() >= pointPosn.getX() &&
+        return this.position.getX() <= pointPosn.getX() &&
             this.position.getY() >= pointPosn.getY() &&
-            this.position.getX() <= pointPosn.getX() + this.width &&
-            this.position.getY() <= pointPosn.getY() - this.height;
+            this.position.getX() + this.width >= pointPosn.getX() &&
+            this.position.getY() - this.height <= pointPosn.getY();
     }
 }
 
@@ -100,10 +100,10 @@ class Building {
     }
 
     containsPoint(pointPosn) {
-        return this.position.getX() >= pointPosn.getX() &&
+        return this.position.getX() <= pointPosn.getX() &&
             this.position.getY() >= pointPosn.getY() &&
-            this.position.getX() <= pointPosn.getX() + this.width &&
-            this.position.getY() <= pointPosn.getY() - this.height;
+            this.position.getX() + this.width >= pointPosn.getX() &&
+            this.position.getY() - this.height <= pointPosn.getY();
     }
 }
 
@@ -459,7 +459,6 @@ window.onload = function () {
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
     var model = new KinematicGorillaModel(["Adam", "Joshua"]);
-    console.log(model.gorillas[0].position);
 
     function resize() {
         var launchForm = document.getElementById("launch-form");
@@ -544,6 +543,7 @@ window.onload = function () {
 
             model.gorillas.forEach(gorilla => {
                 if (gorilla.containsPoint(banana.position)) {
+                    console.log("collided with gorilla " + gorilla.position.getX() + " " + gorilla.position.getY());
                     gorilla.alive = false;
                     collided = true;
                 }
@@ -622,7 +622,6 @@ window.onload = function () {
         buttonDownTest = false;
         var totalX = Math.abs(endX - startX);
         var totalY = Math.abs(endY - startY);
-        console.log("X = " + totalX + " Y = " + totalY);
     }
 
     // Call init to start the game
