@@ -452,10 +452,16 @@ class RenderView {
     }
 
     renderCoordinates(startPos, endPos, width) {
-        this.context.font = "bold 20px Georgia";
+        this.context.font = "bold 60px Georgia";
         this.context.fillStyle = "black";
         this.context.fillText("(" + Math.round(startPos.getX() * GAME_WIDTH / width) + ", " + Math.round(startPos.getY() * GAME_WIDTH / width) + ")", startPos.getX() - 50, startPos.getY(), 50);
         this.context.fillText("(" + Math.round(endPos.getX() * GAME_WIDTH / width) + ", " + Math.round(endPos.getY() * GAME_WIDTH / width) + ")", endPos.getX(), endPos.getY(), 50);
+    }
+
+    renderPlayerID(canvasWidth, canvasHeight) {
+        this.context.font = "bold 20px Georgia";
+        this.context.fillStyle = "red";
+        this.context.fillText("Player: GorillaMatics", 50, 50, 150);
     }
 }
 
@@ -663,6 +669,8 @@ window.onload = function () {
             view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
             view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
         }
+
+        view.renderPlayerID(canvas.width, canvas.height);
     }
 
     canvas.onmousedown = function(e) {
