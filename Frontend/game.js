@@ -399,6 +399,36 @@ class RenderView {
         }
     }
 
+    renderExplosion(x,y) {
+        var canvas = document.getElementById("viewport");
+
+        if (this.tick % 80 >= 0 && this.tick % 80 < 16) {
+            var explode = document.getElementById("explosion1-img");
+            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+        }
+        else if (this.tick % 16 >= 8 && this.tick % 80 < 32) {
+            var explode = document.getElementById("explosion2-img");
+            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+
+        }
+        else if (this.tick % 80 >= 32 && this.tick % 80 < 48) {
+            var explode = document.getElementById("explosion3-img");
+            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+
+        }
+        else if (this.tick % 80 >= 48 && this.tick % 80 < 64) {
+            var explode = document.getElementById("explosion4-img");
+            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+
+        }
+        else {
+            var explode = document.getElementById("explosion5-img");
+            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+
+        }
+
+    }
+
 }
 
 function getRndInteger(min, max) {
