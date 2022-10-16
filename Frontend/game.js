@@ -226,14 +226,16 @@ class RenderView {
         //put window function here
         var canvas = document.getElementById("viewport");
         var imgWindow = document.getElementById(window);
-        this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+        var COLUMN_HEIGHT_WIDTH_FRACTION = 0.04;
+
+        this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
 
         var columns = Math.ceil(width / (0.04 * canvas.width));
-        var rows = Math.ceil(height / (0.1 * canvas.height));
+        var rows = Math.ceil(height / (COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width));
 
         for (let row = 0; row < rows; row++) {
             for (let column = 0; column < columns; column++) {
-                this.context.drawImage(imgWindow, x + column * 0.04 * canvas.width, y + row * 0.1 * canvas.height, 0.04 * canvas.width, 0.1 * canvas.height);
+                this.context.drawImage(imgWindow, x + column * 0.04 * canvas.width, y + row * COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
             }
         }
         // this.context.fillStyle = "#000000";
