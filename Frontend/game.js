@@ -127,7 +127,6 @@ class KinematicGorillaModel {
     addGorillas(playerIds) {
         var gorillas = [];
 
-        //console.log(playerIds)
         for (var ii = 0; ii < playerIds.length; ii++) {
             var position;
             var orientation;
@@ -216,19 +215,27 @@ class RenderView {
     }
 
 
-    renderBanana(x, y) {
+    renderBanana(x, y, orientation) {
         var banana = document.getElementById("banana-img");
+        var bananaLeft = document.getElementById("banana-img-l");
         var canvas = document.getElementById("viewport");
 
-        // this.context.fillStyle = "#FFFF00";
-        // this.context.fillRect(x, y, 10, 10);
-        this.context.drawImage(banana, x, y, 0.01 * canvas.width, 0.025 * canvas.height);
+        switch (orientation) {
+            case Orientation.LEFT:
+                this.context.drawImage(bananaLeft, x, y, 0.01 * canvas.width, 0.025 * canvas.height);
+                break;
+            case Orientation.RIGHT:
+                this.context.drawImage(banana, x, y, 0.01 * canvas.width, 0.025 * canvas.height);
+        }
 
     }
 
-    renderGorilla(x, y, banana) {
+    renderGorilla(x, y, banana, orientation) {
         if (banana) {
-            this.renderGorillaBanana(x, y)
+            // with certain number of ticks
+            this.renderGorillaBanana(x, y, true, orientation);
+            // with certain number of ticks
+            this.renderGorillaBanana(x, y, false, orientation);
         }
         else {
             this.renderGorillaBreathing(x, y)
@@ -261,12 +268,10 @@ class RenderView {
         if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
         }
-        console.log(orientation);
 
         switch (orientation) {
             case Orientation.LEFT:
                 if (this.breatheUp) {
-                    console.log("this is x = " + x + " and y = " + y);
                     this.context.drawImage(imgBreatheUpGorillaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 else {
@@ -275,12 +280,9 @@ class RenderView {
                 break;
             case Orientation.RIGHT:
                 if (this.breatheUp) {
-                    //console.log("hi");
-                    console.log("this is x = " + x + " and y = " + y);
                     this.context.drawImage(imgBreatheUpGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 else {
-                    //console.log("hello");
                     this.context.drawImage(imgBreatheDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
                 }
                 break;
@@ -289,9 +291,11 @@ class RenderView {
     }
 
 
-    renderGorillaWin(x, y) {
+    renderGorillaWin(x, y, orientation) {
         var imgWinUpGorilla = document.getElementById("win1-img");
         var imgWinDownGorilla = document.getElementById("win2-img");
+        var imgWinUpGorillaLeft = document.getElementById("win1-img-l");
+        var imgWinDownGorillaLeft = document.getElementById("win2-img-l");
         var canvas = document.getElementById("viewport");
 
         if (this.tick % 30 === 0) {
@@ -304,27 +308,59 @@ class RenderView {
         else {
             this.context.drawImage(imgWinDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
         }
+
+        switch (orientation) {
+            case Orientation.LEFT:
+                if (this.breatheUp) {
+                    this.context.drawImage(imgWinUpGorillaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+                }
+                else {
+                    this.context.drawImage(imgWinDownGorillaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+                }
+                break;
+            case Orientation.RIGHT:
+                if (this.breatheUp) {
+                    this.context.drawImage(imgWinUpGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+                }
+                else {
+                    this.context.drawImage(imgWinDownGorilla, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+                }
+                break;
+        }
         this.tick = this.tick + 1;
     }
 
-    renderGorillaBanana(x, y, withBanana) {
+    renderGorillaBanana(x, y, withBanana, orientation) {
         var imgWithBanana = document.getElementById("wb-img");
         var imgWithoutBanana = document.getElementById("win1-img");
+        var imgWithBananaLeft = document.getElementById("wb-img-l");
+        var imgWithoutBananaLeft = document.getElementById("win1-img-l");
         var canvas = document.getElementById("viewport");
 
-        // just the image according to the boolean given
-        if (withBanana) {
-            // image of gorilla holding banana
-            // this.context.fillStyle = "#000000";
-            // this.context.fillRect(x, y, 40, 60);
-            this.context.drawImage(imgWithBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+        switch (orientation) {
+            case Orientation.LEFT:
+                // just the image according to the boolean given
+                if (withBanana) {
+                    // image of gorilla holding banana
+                    this.context.drawImage(imgWithBananaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
 
-        }
-        else {
-            // same pos: image of gorilla without banana
-            // this.context.fillStyle = "#ffffff";
-            // this.context.fillRect(x, y, 40, 60);
-            this.context.drawImage(imgWithoutBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+                }
+                else {
+                    // same pos: image of gorilla without banana
+                    this.context.drawImage(imgWithoutBananaLeft, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+                }
+
+            case Orientation.RIGHT:
+                // just the image according to the boolean given
+                if (withBanana) {
+                    // image of gorilla holding banana
+                    this.context.drawImage(imgWithBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+
+                }
+                else {
+                    // same pos: image of gorilla without banana
+                    this.context.drawImage(imgWithoutBanana, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+                }
         }
     }
 
@@ -458,17 +494,11 @@ window.onload = function () {
         context.font = "12px Verdana";
         context.fillText("Fps: " + fps, 13, 70);
 
-        //console.log("hello");
-
-        // var view = new RenderView()
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            //console.log("hi");
-            //console.log(model.gorillas[ii].position.getX());
-            //console.log(model.gorillas[ii].position.getY());
             view.renderGorillaBreathing(model.gorillas[ii].position.getX(), model.gorillas[ii].position.getY(), model.gorillas[ii].orientation);
         }
 
-        view.renderBanana(100, 50);
+        view.renderBanana(100, 50, Orientation.RIGHT);
 
     }
 
