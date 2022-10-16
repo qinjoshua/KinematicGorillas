@@ -149,7 +149,7 @@ class KinematicGorillaModel {
     }
 
     // Adds Gorillas representing players to the game
-    addGorillas(playerIds) {
+    addGorillas(playerIDs) {
         var gorillas = [];
 
         for (var ii = 0; ii < playerIDs.length; ii++) {
@@ -452,11 +452,11 @@ class RenderView {
         this.context.stroke();
     }
 
-    renderCoordinates(startPos, endPos) {
+    renderCoordinates(startPos, endPos, width) {
         this.context.font = "bold 20px Georgia";
         this.context.fillStyle = "black";
-        this.context.fillText("(" + startPos.getX() + ", " + startPos.getY() + ")", startPos.getX() - 50, startPos.getY(), 50);
-        this.context.fillText("(" + endPos.getX() + ", " + endPos.getY() + ")", endPos.getX(), endPos.getY(), 50);
+        this.context.fillText("(" + Math.round(startPos.getX() * GAME_WIDTH / width) + ", " + Math.round(startPos.getY() * GAME_WIDTH / width) + ")", startPos.getX() - 50, startPos.getY(), 50);
+        this.context.fillText("(" + Math.round(endPos.getX() * GAME_WIDTH / width) + ", " + Math.round(endPos.getY() * GAME_WIDTH / width) + ")", endPos.getX(), endPos.getY(), 50);
     }
 }
 
@@ -474,9 +474,9 @@ class MeasuringRuler {
         this.drawRuler = false;
     }
 
-    getHorizontalDistance() {
+    getHorizontalDistance(width) {
         if (this.drawRuler) {
-            return Math.abs(this.startPos.getX() - this.endPos.getY());
+            return Math.round(Math.abs(this.startPos.getX() - this.endPos.getX()) * GAME_WIDTH / width);
         }
     }
 }
@@ -648,7 +648,7 @@ window.onload = function () {
         if (measuringRuler.drawRuler) {
             console.log(measuringRuler.startPos.toString());
             view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
-            view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos);
+            view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
         }
     }
 
@@ -664,7 +664,7 @@ window.onload = function () {
             measuringRuler.drawRuler = true;
         //}
         //var totalY = Math.abs(endY - startY);
-        document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance() + "m.";
+        document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvas.width) + "m.";
         //context.stroke();
         //console.log("X = " + totalX + " Y = " + totalY);
         context.beginPath();
