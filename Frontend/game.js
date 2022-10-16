@@ -618,11 +618,11 @@ window.onload = function () {
         var imgBackground = document.getElementById("background");
 
         // Draw background and a border
-        context.fillStyle = "#d0d0d0";
+        context.fillStyle = "#67d8da";
         context.fillRect(0, 0, canvas.width, canvas.height);
-        context.fillStyle = "#0ce6ff";
+        context.fillStyle = "#67d8da";
         context.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
-        context.drawImage(imgBackground, 0, 0, canvas.width, canvas.height);
+        context.drawImage(imgBackground, 0, canvas.height - (canvas.width * (imgBackground.height / imgBackground.width)), canvas.width, canvas.width * (imgBackground.height / imgBackground.width));
 
         // Display fps
         context.fillStyle = "#ffffff";
