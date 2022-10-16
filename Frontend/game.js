@@ -625,7 +625,9 @@ window.onload = function () {
         // Launch a banana
         if (launch) {
             launch = false;
-            model.addBanana(playerID, launchSpeed, launchAngle);
+            if (model.gorillas[0].shotsLeft > 0) {
+                model.addBanana(playerID, launchSpeed, launchAngle);
+            }
         }
     }
 
