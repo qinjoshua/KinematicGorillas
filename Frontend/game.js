@@ -589,8 +589,20 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
+            // Gorilla Wins
+            if (!model.gorillas[ii].alive) {
+                //render explosion
+                view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
+                // the other gorilla wins
+                let winningGorilla = model.gorillas.splice(ii, 1)[0];
+                view.renderGorillaWin(winningGorilla.position.getPixelX() - 20, winningGorilla.position.getPixelY() + 10, winningGorilla.orientation);
+            } else if (model.gorillas[ii].alive) { //only breathing if alive
+                view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+            }
+            // Gorilla Banana
+            // if ()
             // Different states of Gorilla
-            view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+            // view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
         }
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
