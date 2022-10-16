@@ -589,6 +589,7 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
+            // Different states of Gorilla
             view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
         }
 
@@ -598,7 +599,7 @@ window.onload = function () {
         }
 
         for (var ii = 0; ii < model.bananas.length; ii++) {
-            view.renderBanana(model.bananas[ii].getPixelX(), model.bananas[ii].getPixelY());
+            view.renderBanana(model.bananas[ii].position.getPixelX(), model.bananas[ii].position.getPixelY());
         }
         // view.renderBanana(framecount, 99);
     }
