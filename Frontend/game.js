@@ -501,10 +501,7 @@ window.onload = function () {
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
     var model = new KinematicGorillaModel(["Adam", "Joshua"]);
-<<<<<<< HEAD
-=======
     var measuringRuler = new MeasuringRuler();
->>>>>>> f132f15155e06bd94f7f5d8fcc362f4c60340915
 
     function resize() {
         var launchForm = document.getElementById("launch-form");
@@ -656,14 +653,6 @@ window.onload = function () {
         }
     }
 
-<<<<<<< HEAD
-    canvas.onmouseup = function (e) {
-        endX = e.x;
-        endY = e.y;
-        buttonDownTest = false;
-        var totalX = Math.abs(endX - startX);
-        var totalY = Math.abs(endY - startY);
-=======
     canvas.onmousedown = function(e) {
         measuringRuler.drawRuler = false;
         measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
@@ -680,7 +669,6 @@ window.onload = function () {
         //context.stroke();
         //console.log("X = " + totalX + " Y = " + totalY);
         context.beginPath();
->>>>>>> f132f15155e06bd94f7f5d8fcc362f4c60340915
     }
 
     // Call init to start the game
