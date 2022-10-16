@@ -13,22 +13,26 @@ var PIXEL_TO_POSN;
 
 var GRAVITY = math.matrix([[0], [9.8]]);
 
+function metersToPixels(meters) {
+    return meters * (gameWidth / GAME_WIDTH);
+}
+
 class Posn {
     constructor(vector) {
         this.vector = vector;
     }
 
-    getX() {
-        return this.vector.subset(math.index(0, 0));
-    }
+    getX() { return this.vector.subset(math.index(0, 0)); }
 
-    getY() {
-        return this.vector.subset(math.index(1, 0));
-    }
+    getY() { return this.vector.subset(math.index(1, 0)); }
 
-    toString() {
-        return "Posn: X = " + this.getX() + " Y = " + this.getY();
-    }
+    getPixelX() { return metersToPixels(this.getX()); }
+
+    getPixelY() { return metersToPixels(GAME_HEIGHT - this.getY()); }
+
+    getPosition() { return this.vector; }
+
+    toString() { return "Posn: X = " + this.getX() + " Y = " + this.getY(); }
 }
 
 class BananaFactory {
@@ -117,7 +121,7 @@ class KinematicGorillaModel {
             var building = new Building(x * GAME_WIDTH, y * GAME_HEIGHT, buildingOrigin);
             buildings.push(building);
 
-            widthCovered = widthCovered + (x * GAME_HEIGHT);
+            widthCovered = widthCovered + (x * GAME_WIDTH);
         }
 
         return buildings;
@@ -202,8 +206,8 @@ class RenderView {
 
     renderBuilding(x, y, width, height) {
         //put window function here
-        var randColor = this.getRandomColor();
-        this.context.fillStyle = randColor;
+        //var randColor = this.getRandomColor();
+        this.context.fillStyle = "#000000";
         this.context.fillRect(x, y, width, height);
     }
 
@@ -495,7 +499,12 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            view.renderGorillaBreathing(model.gorillas[ii].position.getX(), model.gorillas[ii].position.getY(), model.gorillas[ii].orientation);
+            view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+        }
+
+        for (var ii = 0; ii < model.buildings.length; ii++) {
+            view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
+                metersToPixels(model.buildings[ii].width), metersToPixels(model.buildings[ii].height))
         }
 
         view.renderBanana(framecount, 99, Orientation.RIGHT);
