@@ -468,6 +468,7 @@ class RenderView {
 
     updateTick() {
         this.tick = this.tick + 1;
+        console.log(this.tick);
     }
 }
 
@@ -631,7 +632,6 @@ window.onload = function () {
     }
 
     function drawFrame() {
-        // view.updateTick();
         // console.log(view.tick);
 
         var imgBackground = document.getElementById("background");
@@ -651,16 +651,19 @@ window.onload = function () {
         for (var ii = 0; ii < model.gorillas.length; ii++) {
             if (model.roundOver) {
                 if (model.gorillas[ii].alive) {
-                    view.renderGorillaWin(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
+                    view.renderGorillaWin(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation);
                 } else {
-                    view.renderExplosion(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10);
+                    view.renderExplosion(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY());
                 }
                 // } else if (LAUNCH_TIME !== null && (view.tick - LAUNCH_TIME > 60 * 5)) {
                 // view.renderGorillaBanana(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
             } else {
-                view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX() - 20, model.gorillas[ii].position.getPixelY() + 10, model.gorillas[ii].orientation);
-            }
+                view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation);
+            };
+            view.updateTick();
         }
+        //view.updateTick();
+
 
         /*for (var ii = 0; ii < model.gorillas.length; ii++) {
             // Gorilla Wins
