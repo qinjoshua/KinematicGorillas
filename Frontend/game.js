@@ -204,11 +204,23 @@ class RenderView {
         return color;
     }
 
+    // id of window should be used
     renderBuilding(x, y, width, height) {
         //put window function here
-        //var randColor = this.getRandomColor();
-        this.context.fillStyle = "#000000";
-        this.context.fillRect(x, y, width, height);
+        var canvas = document.getElementById("viewport");
+        var imgWindow = document.getElementById("window-1");
+        this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
+
+        var columns = Math.round(width / (0.04 * canvas.width));
+        var rows = Math.round(height / (0.1 * canvas.height));
+
+        for (let row = 0; row < rows; row++) {
+            for (let column = 0; column < columns; column++) {
+                this.context.drawImage(imgWindow, x + column * 0.04 * canvas.width, y + row * 0.1 * canvas.height, 0.04 * canvas.width, 0.1 * canvas.height);
+            }
+        }
+        // this.context.fillStyle = "#000000";
+        // this.context.fillRect(x, y, width, height);
     }
 
     renderBuildings(buildings) {
@@ -242,7 +254,7 @@ class RenderView {
             this.renderGorillaBanana(x, y, false, orientation);
         }
         else {
-            this.renderGorillaBreathing(x, y)
+            this.renderGorillaBreathing(x, y, orientation)
         }
     }
 
@@ -487,11 +499,14 @@ window.onload = function () {
 
     function drawFrame() {
 
+        var imgBackground = document.getElementById("background");
+
         // Draw background and a border
         context.fillStyle = "#d0d0d0";
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = "#0ce6ff";
         context.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
+        context.drawImage(imgBackground, 0, 0, canvas.width, canvas.height);
 
         // Display fps
         context.fillStyle = "#ffffff";
