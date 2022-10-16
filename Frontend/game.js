@@ -11,24 +11,35 @@ let MAX_SHOTS = 3;
 
 var PIXEL_TO_POSN;
 
-var GRAVITY = math.matrix([[0], [9.8]]);
+var GRAVITY = math.matrix([[0], [-9.8]]);
+
+var gameWidth;
+var gameHeight;
+
+var launchAngle;
+var launchSpeed;
+var launch = false;
+
+function metersToPixels(meters) {
+    return meters * (gameWidth / GAME_WIDTH);
+}
 
 class Posn {
     constructor(vector) {
         this.vector = vector;
     }
 
-    getX() {
-        return this.vector.subset(math.index(0, 0));
-    }
+    getX() { return this.vector.subset(math.index(0, 0)); }
 
-    getY() {
-        return this.vector.subset(math.index(1, 0));
-    }
+    getY() { return this.vector.subset(math.index(1, 0)); }
 
-    toString() {
-        return "Posn: X = " + this.getX() + " Y = " + this.getY();
-    }
+    getPixelX() { return metersToPixels(this.getX()); }
+
+    getPixelY() { return metersToPixels(GAME_HEIGHT - this.getY()); }
+
+    getPosition() { return this.vector; }
+
+    toString() { return "Posn: X = " + this.getX() + " Y = " + this.getY(); }
 }
 
 class BananaFactory {
@@ -65,6 +76,13 @@ class Gorilla {
         this.shotsLeft = shots;
         this.alive = true;
     }
+
+    containsPoint(pointPosn) {
+        return this.position.getX() >= pointPosn.getX() &&
+            this.position.getY() >= pointPosn.getY() &&
+            this.position.getX() <= pointPosn.getX() + this.width &&
+            this.position.getY() <= pointPosn.getY() - this.height;
+    }
 }
 
 class Building {
@@ -83,10 +101,10 @@ class Building {
 }
 
 class KinematicGorillaModel {
-    constructor(playerIds) {
+    constructor(playerIDs) {
         this.buildings = this.createSkyline();
-        // TODO: Turn array into Map of PlayerID->Gorilla
-        this.gorillas = this.addGorillas(playerIds);
+        // TODO: Turn array into Map of playerID->Gorilla
+        this.gorillas = this.addGorillas(playerIDs);
         this.bananas = [];
     }
 
@@ -127,7 +145,6 @@ class KinematicGorillaModel {
     addGorillas(playerIds) {
         var gorillas = [];
 
-        //console.log(playerIds)
         for (var ii = 0; ii < playerIds.length; ii++) {
             var position;
             var orientation;
@@ -150,7 +167,7 @@ class KinematicGorillaModel {
                 default:
                     break;
             }
-
+            
             var gorilla = new Gorilla(position, orientation, width, height, playerIds[ii], MAX_SHOTS);
             gorillas.push(gorilla);
         }
@@ -158,9 +175,9 @@ class KinematicGorillaModel {
         return gorillas;
     }
 
-    addBanana(playerId, speed, angle) {
+    addBanana(playerID, speed, angle) {
         for (var ii = 0; ii < this.gorillas.length; ii++) {
-            if (this.gorillas[ii].playerId === playerId) {
+            if (this.gorillas[ii].playerID === playerID) {
                 var gorilla = this.gorillas[ii]
 
                 var bananaOrigin;
@@ -320,11 +337,9 @@ window.onload = function () {
     console.log(model.gorillas[0].position);
 
     function resize() {
-        var container = document.getElementById("viewport-container");
         var launchForm = document.getElementById("launch-form");
         gameWidth = window.innerWidth;
         gameHeight = document.documentElement.clientHeight - launchForm.clientHeight;
-        console.log(document.documentElement.clientHeight + " " + launchForm.clientHeight + " " + gameHeight);
         canvas.width = gameWidth;
         canvas.height = gameHeight;
     }
@@ -339,6 +354,9 @@ window.onload = function () {
     var fps = 0;
     // render view
     var view = new RenderView(context);
+
+    // TODO: we've got to be able to set playerID somehow
+    var playerID = "Adam";
 
     // Initialize the game
     function init() {
@@ -383,34 +401,44 @@ window.onload = function () {
         framecount++;
 
         // Update bannana positions, check for collision
-        model.bananas.forEach(banana => {
-            banana.velocity = math.add(banana.velocity, banana.GRAVITY);
-            banana.position = new Posn(math.add(banana.position.getPosition(), banana.velocity));
+        
+        for (var bi = 0; bi < model.bananas.length; bi++) {
+            let banana = model.bananas[bi];
+
+            banana.velocity = math.add(banana.velocity, math.multiply(GRAVITY, dt));
+            banana.position = new Posn(math.add(banana.position.getPosition(), math.multiply(banana.velocity, dt)));
 
             // Check for collisions
             var collided = false;
 
             model.buildings.forEach(building => {
-                if (building.containsPoint()) {
+                if (building.containsPoint(banana.position)) {
                     collided = true;
                 }
             });
 
             model.gorillas.forEach(gorilla => {
-                if (gorilla.containsPoint()) {
+                if (gorilla.containsPoint(banana.position)) {
                     gorilla.alive = false;
                     collided = true;
                 }
             });
 
-            if (banana.position.getX() > GAME_WIDTH || banana.position.getY() < GAME_WIDTH) {
+            if (banana.position.getX() > GAME_WIDTH || banana.position.getX() > GAME_WIDTH < 0) {
                 collided = true;
             }
 
             if (collided) {
-                model.bananas.removeChild(banana);
+                // Trigger explosion at the position the banana was located formerly
+                model.bananas.splice(bi);
             }
-        });
+        }
+
+        // Launch a banana
+        if (launch) {
+            launch = false;
+            model.addBanana(playerID, launchSpeed, launchAngle);
+        }
     }
 
     // Render the game
@@ -420,7 +448,6 @@ window.onload = function () {
     }
 
     function drawFrame() {
-
         // Draw background and a border
         context.fillStyle = "#d0d0d0";
         context.fillRect(0, 0, canvas.width, canvas.height);
@@ -432,13 +459,7 @@ window.onload = function () {
         context.font = "12px Verdana";
         context.fillText("Fps: " + fps, 13, 70);
 
-        //console.log("hello");
-
-        // var view = new RenderView()
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            //console.log("hi");
-            //console.log(model.gorillas[ii].position.getX());
-            //console.log(model.gorillas[ii].position.getY());
             view.renderGorillaBreathing(model.gorillas[ii].position.getX(), model.gorillas[ii].position.getY(), model.gorillas[ii].orientation);
         }
 
@@ -471,5 +492,17 @@ window.onload = function () {
 };
 
 var form = document.getElementById("launch-form");
-function handleForm(event) { event.preventDefault(); }
+function handleForm(event) {
+    event.preventDefault();
+    if (document.getElementById("angle").value !== "" && document.getElementById("velocity").value !== "") {
+
+        launchSpeed = document.getElementById("velocity").value;
+        launchAngle = document.getElementById("angle").value;
+
+        launch = true;
+    }
+    else {
+        alert("Please enter an angle and and initial velocity");
+    }
+}
 form.addEventListener('submit', handleForm);
