@@ -82,10 +82,10 @@ class Gorilla {
     }
 
     containsPoint(pointPosn) {
-        return this.position.getX() >= pointPosn.getX() &&
+        return this.position.getX() <= pointPosn.getX() &&
             this.position.getY() >= pointPosn.getY() &&
-            this.position.getX() <= pointPosn.getX() + this.width &&
-            this.position.getY() <= pointPosn.getY() - this.height;
+            this.position.getX() + this.width >= pointPosn.getX() &&
+            this.position.getY() - this.height <= pointPosn.getY();
     }
 }
 
@@ -100,10 +100,10 @@ class Building {
     }
 
     containsPoint(pointPosn) {
-        return this.position.getX() >= pointPosn.getX() &&
+        return this.position.getX() <= pointPosn.getX() &&
             this.position.getY() >= pointPosn.getY() &&
-            this.position.getX() <= pointPosn.getX() + this.width &&
-            this.position.getY() <= pointPosn.getY() - this.height;
+            this.position.getX() + this.width >= pointPosn.getX() &&
+            this.position.getY() - this.height <= pointPosn.getY();
     }
 }
 
@@ -444,10 +444,52 @@ class RenderView {
 
     }
 
+    renderMeasuringRuler(startPos, endPos) {
+        this.context.lineWidth = 2;
+        this.context.moveTo(startPos.getX(), startPos.getY());
+        this.context.lineTo(endPos.getX(), endPos.getY());
+        this.context.strokeStyle = "red";
+        this.context.stroke();
+    }
+
+    renderCoordinates(startPos, endPos, width) {
+        this.context.font = "bold 20px Georgia";
+        this.context.fillStyle = "black";
+        this.context.fillText("(" + Math.round(startPos.getX() * GAME_WIDTH / width) + ", " + Math.round(startPos.getY() * GAME_WIDTH / width) + ")", startPos.getX() - 50, startPos.getY(), 50);
+        this.context.fillText("(" + Math.round(endPos.getX() * GAME_WIDTH / width) + ", " + Math.round(endPos.getY() * GAME_WIDTH / width) + ")", endPos.getX(), endPos.getY(), 50);
+    }
+}
+
+const ArrowEdge = {
+    TOP_RIGHT: 0,
+    BOTTOM_RIGHT: 1,
+    BOTTOM_LEFT: 2,
+    TOP_LEFT: 3
+}
+
+class MeasuringRuler {
+    constructor() {
+        this.startPos = null;
+        this.endPos = null;
+        this.drawRuler = false;
+    }
+
+    getHorizontalDistance(width) {
+        if (this.drawRuler) {
+            return Math.round(Math.abs(this.startPos.getX() - this.endPos.getX()) * GAME_WIDTH / width);
+        }
+    }
 }
 
 function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function distanceBetweenTwoPoints(pos1, pos2) {
+    let x = pos2.getX() - pos1.getX();
+    let y = pos2.getY() - pos1.getY();
+    
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
 var worldGame = new KinematicGorillaModel(["Adam", "Joshua"]);
@@ -459,7 +501,7 @@ window.onload = function () {
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
     var model = new KinematicGorillaModel(["Adam", "Joshua"]);
-    console.log(model.gorillas[0].position);
+    var measuringRuler = new MeasuringRuler();
 
     function resize() {
         var launchForm = document.getElementById("launch-form");
@@ -544,6 +586,7 @@ window.onload = function () {
 
             model.gorillas.forEach(gorilla => {
                 if (gorilla.containsPoint(banana.position)) {
+                    console.log("collided with gorilla " + gorilla.position.getX() + " " + gorilla.position.getY());
                     gorilla.alive = false;
                     collided = true;
                 }
@@ -607,34 +650,37 @@ window.onload = function () {
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
             view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
-                metersToPixels(model.buildings[ii].width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window)
+                metersToPixels(model.buildings[ii].width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
         }
 
         for (var ii = 0; ii < model.bananas.length; ii++) {
             view.renderBanana(model.bananas[ii].position.getPixelX(), model.bananas[ii].position.getPixelY());
         }
         // view.renderBanana(framecount, 99);
+
+        if (measuringRuler.drawRuler) {
+            console.log(measuringRuler.startPos.toString());
+            view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
+            view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
+        }
     }
 
-    var buttonDownTest = false;
-    var startX;
-    var endX;
-    var startY;
-    var endY;
-
-    canvas.onmousedown = function (e) {
-        startX = e.x;
-        startY = e.y;
-        buttonDownTest = true;
+    canvas.onmousedown = function(e) {
+        measuringRuler.drawRuler = false;
+        measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
+        context.clearRect(0, 0, canvas.width, canvas.height);
     }
-
-    canvas.onmouseup = function (e) {
-        endX = e.x;
-        endY = e.y;
-        buttonDownTest = false;
-        var totalX = Math.abs(endX - startX);
-        var totalY = Math.abs(endY - startY);
-        console.log("X = " + totalX + " Y = " + totalY);
+    
+    canvas.onmouseup = function(e) {
+        measuringRuler.endPos = new Posn(math.matrix([[e.x], [e.y]]));
+        //if (measuringRuler.startPos !== null && measuringRuler.endPos !== null) {
+            measuringRuler.drawRuler = true;
+        //}
+        //var totalY = Math.abs(endY - startY);
+        document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvas.width) + "m.";
+        //context.stroke();
+        //console.log("X = " + totalX + " Y = " + totalY);
+        context.beginPath();
     }
 
     // Call init to start the game
