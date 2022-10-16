@@ -463,6 +463,19 @@ class RenderView {
         this.context.fillStyle = "red";
         this.context.fillText("Player: GorillaMatics", 50, 50, 150);
     }
+
+    renderBananaAttempts(shotsLeft) {
+        var canvas = document.getElementById("viewport");
+        if (shotsLeft >= 1) {
+            this.context.drawImage(document.getElementById("banana1-img"), 60, 60, 0.02 * canvas.width, 0.05 * canvas.height);
+        }
+        if (shotsLeft >= 2) {
+            this.context.drawImage(document.getElementById("banana1-img"), 80, 60, 0.02 * canvas.width, 0.05 * canvas.height);
+        }
+        if (shotsLeft === 3) {
+            this.context.drawImage(document.getElementById("banana1-img"), 100, 60, 0.02 * canvas.width, 0.05 * canvas.height);
+        }
+    }
 }
 
 const ArrowEdge = {
@@ -604,6 +617,7 @@ window.onload = function () {
 
             if (collided) {
                 // Trigger explosion at the position the banana was located formerly
+                model.bananas[bi].gorilla.shotsLeft -= 1;
                 model.bananas.splice(bi, 1);
             }
         }
@@ -635,7 +649,7 @@ window.onload = function () {
         // Display fps
         context.fillStyle = "#ffffff";
         context.font = "12px Verdana";
-        context.fillText("Fps: " + fps, 13, 70);
+        //context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
             if (model.roundOver) {
@@ -671,6 +685,8 @@ window.onload = function () {
         }
 
         view.renderPlayerID(canvas.width, canvas.height);
+
+        view.renderBananaAttempts(model.gorillas[0].shotsLeft);
     }
 
     canvas.onmousedown = function(e) {
