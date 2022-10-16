@@ -208,6 +208,7 @@ class RenderView {
         this.context = context
         this.tick = 1;
         this.breatheUp = true;
+        this.roundOver = false;
     }
 
     getRandomColor() {
@@ -586,6 +587,7 @@ window.onload = function () {
                 if (gorilla.containsPoint(banana.position)) {
                     console.log("collided with gorilla " + gorilla.position.getX() + " " + gorilla.position.getY());
                     gorilla.alive = false;
+                    model.roundOver = true;
                     collided = true;
                 }
             });
@@ -630,9 +632,21 @@ window.onload = function () {
         context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
+            if (model.roundOver) {
+                if (model.gorillas[ii].alive) {
+                    view.renderGorillaWin(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
+                } else {
+                    view.renderExplosion(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY());
+                }
+            } else {
+                view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
+            }
+        }
+
+        /*for (var ii = 0; ii < model.gorillas.length; ii++) {
             // Different states of Gorilla
             view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
-        }
+        }*/
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
             view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
