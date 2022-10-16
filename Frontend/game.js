@@ -568,7 +568,10 @@ window.onload = function () {
                 metersToPixels(model.buildings[ii].width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window)
         }
 
-        view.renderBanana(framecount, 99);
+        for (var ii = 0; ii < model.bananas.length; ii++) {
+            view.renderBanana(model.bananas[ii].getPixelX(), model.bananas[ii].getPixelY());
+        }
+        // view.renderBanana(framecount, 99);
     }
 
     var buttonDownTest = false;
