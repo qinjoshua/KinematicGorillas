@@ -348,7 +348,7 @@ class RenderView {
                 }
                 break;
         }
-        this.tick = this.tick + 1;
+        //this.updateTick();
     }
 
 
