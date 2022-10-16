@@ -24,10 +24,6 @@ function metersToPixels(meters) {
     return meters * (gameWidth / GAME_WIDTH);
 }
 
-function metersToPixels(meters) {
-    return meters * (gameWidth / GAME_WIDTH);
-}
-
 class Posn {
     constructor(vector) {
         this.vector = vector;
@@ -39,7 +35,7 @@ class Posn {
 
     getPixelX() { return metersToPixels(this.getX()); }
 
-    getPixelY() { return metersToPixels(GAME_HEIGHT - this.getY()); }
+    getPixelY() { return gameHeight - metersToPixels(this.getY()); }
 
     getPosition() { return this.vector; }
 
@@ -232,8 +228,8 @@ class RenderView {
         var imgWindow = document.getElementById(window);
         this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, 0.1 * canvas.height);
 
-        var columns = Math.round(width / (0.04 * canvas.width));
-        var rows = Math.round(height / (0.1 * canvas.height));
+        var columns = Math.ceil(width / (0.04 * canvas.width));
+        var rows = Math.ceil(height / (0.1 * canvas.height));
 
         for (let row = 0; row < rows; row++) {
             for (let column = 0; column < columns; column++) {
@@ -637,7 +633,7 @@ window.onload = function () {
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
             view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
-                metersToPixels(model.buildings[ii].width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
+                metersToPixels(model.buildings[ii].width, canvas.width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
         }
 
         for (var ii = 0; ii < model.bananas.length; ii++) {
