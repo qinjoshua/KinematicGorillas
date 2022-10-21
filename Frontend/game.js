@@ -94,7 +94,7 @@ class Building {
     constructor(width, height, position) {
         this.width = width;
         this.height = height;
-        this.position = position;
+        this.position = position; //TODO: make this its own function
         var windowRandom = Math.floor(Math.random() * 3);
         var windowStyle = ["window-1", "window-2", "window-3"];
         this.window = windowStyle[windowRandom];
