@@ -4,21 +4,25 @@ let GAME_HEIGHT = 100;
 let GORILLA_WIDTH_FACTOR = 0.05;
 let GORILLA_HEIGHT_FACTOR = 0.1;
 
+//TODO: make contants file
 let LEFT_PLAYER_OPEN_POS = [];
 let RIGHT_PLAYER_OPEN_POS = [];
 
 let MAX_SHOTS = 3;
 
+//TODO: delete!! never used
 var PIXEL_TO_POSN;
 
 var GRAVITY = math.matrix([[0], [-9.8]]);
-
+//TODO: rename to canvasWidth, canvasHeight
 var gameWidth;
 var gameHeight;
 
 var launchAngle;
 var launchSpeed;
 var launch = false;
+
+//TODO: SPLIT INTO MVC files
 
 function metersToPixels(meters) {
     return meters * (gameWidth / GAME_WIDTH);
@@ -29,6 +33,7 @@ class Posn {
         this.vector = vector;
     }
 
+    // TODO: clarify the difference between getX and getPixelX in documentation
     getX() { return this.vector.subset(math.index(0, 0)); }
 
     getY() { return this.vector.subset(math.index(1, 0)); }
@@ -211,6 +216,7 @@ class RenderView {
         this.roundOver = false;
     }
 
+    //TODO: remove this
     getRandomColor() {
         const letters = '0123456789abcdef'.split('');
         let color = '#';
@@ -585,8 +591,10 @@ window.onload = function () {
         fpstime += dt;
         framecount++;
 
+        
+        // TODO: Encapsulate this into the model class
+        
         // Update bannana positions, check for collision
-
         for (var bi = 0; bi < model.bananas.length; bi++) {
             let banana = model.bananas[bi];
 
@@ -622,6 +630,7 @@ window.onload = function () {
             }
         }
 
+        //TODO: discuss redesign
         // Launch a banana
         if (launch) {
             launch = false;
@@ -646,13 +655,17 @@ window.onload = function () {
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = "#67d8da";
         context.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
+        
+        //TODO: make height and width constants that are easier to read
         context.drawImage(imgBackground, 0, canvas.height - (canvas.width * (imgBackground.height / imgBackground.width)), canvas.width, canvas.width * (imgBackground.height / imgBackground.width));
 
-        // Display fps
+        // Display fps --> TODO: remove
         context.fillStyle = "#ffffff";
         context.font = "12px Verdana";
         //context.fillText("Fps: " + fps, 13, 70);
 
+        //TODO: pass the gorilla instead of breaking it down? Have flags for the gorilla: breathing, winning, shooting banana, dead
+        // Inheritance? Composition?
         for (var ii = 0; ii < model.gorillas.length; ii++) {
             if (model.roundOver) {
                 if (model.gorillas[ii].alive) {
@@ -665,6 +678,7 @@ window.onload = function () {
             }
         }
 
+        //TODO: do renderGorilla(Gorilla)
         /*for (var ii = 0; ii < model.gorillas.length; ii++) {
             // Different states of Gorilla
             view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
@@ -675,22 +689,26 @@ window.onload = function () {
                 metersToPixels(model.buildings[ii].width, canvas.width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
         }
 
+        // multiple bananas can be on screen
         for (var ii = 0; ii < model.bananas.length; ii++) {
             view.renderBanana(model.bananas[ii].position.getPixelX(), model.bananas[ii].position.getPixelY());
         }
         // view.renderBanana(framecount, 99);
 
+        //TODO: Adam will take care of it
         if (measuringRuler.drawRuler) {
             console.log(measuringRuler.startPos.toString());
             view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
             view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
         }
-
+        
+        //TODO: should this be integrated with gorilla? each gorilla can have a name tag
         view.renderPlayerID(canvas.width, canvas.height);
 
         view.renderBananaAttempts(model.gorillas[0].shotsLeft);
     }
 
+    //TODO: onmousedrag
     canvas.onmousedown = function(e) {
         measuringRuler.drawRuler = false;
         measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
