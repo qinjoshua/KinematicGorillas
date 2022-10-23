@@ -295,10 +295,18 @@ class RenderView {
         this.roundOver = false;
     }
 
-    renderBuilding(x, y, width, height, window) {
+    renderBuilding(building) {
         var canvas = document.getElementById("viewport");
-        var imgWindow = document.getElementById(window);
         var COLUMN_HEIGHT_WIDTH_FRACTION = 0.04;
+
+        let x = building.position.getPixelX();
+        let y = building.position.getPixelY();
+        let width = metersToPixels(building.width, canvas.width);
+        let height = metersToPixels(building.height);
+        let window = building.window;
+
+        var imgWindow = document.getElementById(window);
+
 
         this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
 
@@ -309,13 +317,6 @@ class RenderView {
             for (let column = 0; column < columns; column++) {
                 this.context.drawImage(imgWindow, x + column * 0.04 * canvas.width, y + row * COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
             }
-        }
-    }
-
-    renderBuildings(buildings) {
-        for (let i = 0; i < buildings.size(); i++) {
-            let building = buildings[i];
-            this.renderBuilding(building.position.getX(), building.position.getY(), building.width, building.height, building.window);
         }
     }
 
@@ -681,8 +682,7 @@ window.onload = function () {
         }
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
-            view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
-                metersToPixels(model.buildings[ii].width, canvas.width), metersToPixels(model.buildings[ii].height), model.buildings[ii].window);
+            view.renderBuilding(model.buildings[ii]);
         }
 
         for (var ii = 0; ii < model.bananas.length; ii++) {
