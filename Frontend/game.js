@@ -9,34 +9,50 @@ let RIGHT_PLAYER_OPEN_POS = [];
 
 let MAX_SHOTS = 3;
 
-var PIXEL_TO_POSN;
-
 var GRAVITY = math.matrix([[0], [-9.8]]);
 
-var gameWidth;
-var gameHeight;
+var canvasWidth;
+var canvasHeight;
 
 var launchAngle;
 var launchSpeed;
 var launch = false;
 
 function metersToPixels(meters) {
-    return meters * (gameWidth / GAME_WIDTH);
+    return meters * (canvasWidth / GAME_WIDTH);
 }
 
 class Posn {
+    /**
+     * @param {Matrix} vector A 2x1 matrix containing the X and Y positions of the Posn
+     */
     constructor(vector) {
         this.vector = vector;
     }
 
+    /**
+     * @returns The X component of this Posn in game coordinates (meters)
+     */
     getX() { return this.vector.subset(math.index(0, 0)); }
 
+    /**
+     * @returns The Y component of this Posn in game coordinates (meters)
+     */
     getY() { return this.vector.subset(math.index(1, 0)); }
 
+    /**
+     * @returns The X component of this Posn in screen pixels
+     */
     getPixelX() { return metersToPixels(this.getX()); }
 
-    getPixelY() { return gameHeight - metersToPixels(this.getY()); }
+    /**
+     * @returns The Y component of this Posn in screen pixels
+     */
+    getPixelY() { return canvasHeight - metersToPixels(this.getY()); }
 
+    /**
+     * @returns Returns the vector form of this Posn
+     */
     getPosition() { return this.vector; }
 
     toString() { return "Posn: X = " + this.getX() + " Y = " + this.getY(); }
@@ -104,11 +120,27 @@ class Building {
 }
 
 class KinematicGorillaModel {
-    constructor(playerIDs) {
+    /**
+     * 
+     * @param {string[]} playerIDs The list of player IDs
+     * @param {int} currentPlayerIndex The index in the previous list of the current active player
+     */
+    constructor(playerIDs, currentPlayerIndex) {
         this.buildings = this.createSkyline();
         // TODO: Turn array into Map of playerID->Gorilla
         this.gorillas = this.addGorillas(playerIDs);
         this.bananas = [];
+        this.currentPlayer = playerIDs[currentPlayerIndex];
+    }
+
+    /**
+     * Method to be called on every tick
+     * @param {integer} dt Length of a single tick
+     */
+    updateOnTick(dt) {
+        this.updateBanana(dt);
+        // TODO: some logic will have to change here when opponents can launch bananas too
+        this.launchBanana(this.currentPlayer);
     }
 
     // Randomly generates a skyline of buildings of different heights and widths
@@ -201,6 +233,54 @@ class KinematicGorillaModel {
             }
         }
     }
+
+    // Updates the positions of all the bananas in the model
+    updateBanana(dt) {
+        for (var bi = 0; bi < this.bananas.length; bi++) {
+            let banana = this.bananas[bi];
+
+            banana.velocity = math.add(banana.velocity, math.multiply(GRAVITY, dt));
+            banana.position = new Posn(math.add(banana.position.getPosition(), math.multiply(banana.velocity, dt)));
+
+            // Check for collisions
+            var collided = false;
+
+            this.buildings.forEach(building => {
+                if (building.containsPoint(banana.position)) {
+                    collided = true;
+                }
+            });
+
+            this.gorillas.forEach(gorilla => {
+                if (gorilla.containsPoint(banana.position)) {
+                    console.log("collided with gorilla " + gorilla.position.getX() + " " + gorilla.position.getY());
+                    gorilla.alive = false;
+                    this.roundOver = true;
+                    collided = true;
+                }
+            });
+
+            if (banana.position.getX() > GAME_WIDTH || banana.position.getX() > GAME_WIDTH < 0) {
+                collided = true;
+            }
+
+            if (collided) {
+                // Trigger explosion at the position the banana was located formerly
+                this.bananas[bi].gorilla.shotsLeft -= 1;
+                this.bananas.splice(bi, 1);
+            }
+        }
+    }
+
+    // Launches a banana, if a launch has been initiated by the player
+    launchBanana(playerID) {
+        if (launch) {
+            launch = false;
+            if (this.gorillas[0].shotsLeft > 0) {
+                this.addBanana(playerID, launchSpeed, launchAngle);
+            }
+        }
+    }
 }
 
 class RenderView {
@@ -209,17 +289,6 @@ class RenderView {
         this.tick = 1;
         this.breatheUp = true;
         this.roundOver = false;
-    }
-
-    getRandomColor() {
-        const letters = '0123456789abcdef'.split('');
-        let color = '#';
-
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.round(Math.random() * 15)];
-        }
-
-        return color;
     }
 
     // id of window should be used
@@ -510,23 +579,19 @@ function distanceBetweenTwoPoints(pos1, pos2) {
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
-var worldGame = new KinematicGorillaModel(["Adam", "Joshua"]);
-console.log(worldGame.gorillas[0].position.toString());
-console.log(worldGame.gorillas[1].position.toString());
-
 window.onload = function () {
     // Get the canvas and context
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
-    var model = new KinematicGorillaModel(["Adam", "Joshua"]);
+    var model = new KinematicGorillaModel(["Adam", "Joshua"], 0);
     var measuringRuler = new MeasuringRuler();
 
     function resize() {
         var launchForm = document.getElementById("launch-form");
-        gameWidth = window.innerWidth;
-        gameHeight = document.documentElement.clientHeight - launchForm.clientHeight;
-        canvas.width = gameWidth;
-        canvas.height = gameHeight;
+        canvasWidth = window.innerWidth;
+        canvasHeight = document.documentElement.clientHeight - launchForm.clientHeight;
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
     }
 
     resize();
@@ -539,9 +604,6 @@ window.onload = function () {
     var fps = 0;
     // render view
     var view = new RenderView(context);
-
-    // TODO: we've got to be able to set playerID somehow
-    var playerID = "Adam";
 
     // Initialize the game
     function init() {
@@ -567,10 +629,14 @@ window.onload = function () {
         var dt = (tframe - lastframe) / 1000;
         lastframe = tframe;
 
+        // Update the Kinematic Gorillas model on tick
+        model.updateOnTick(dt);
+
         // Update the fps counter
         updateFps(dt);
     }
 
+    // Used exclusively to update the fps counter
     function updateFps(dt) {
         if (fpstime > 0.25) {
             // Calculate fps
@@ -584,51 +650,6 @@ window.onload = function () {
         // Increase time and framecount
         fpstime += dt;
         framecount++;
-
-        // Update bannana positions, check for collision
-
-        for (var bi = 0; bi < model.bananas.length; bi++) {
-            let banana = model.bananas[bi];
-
-            banana.velocity = math.add(banana.velocity, math.multiply(GRAVITY, dt));
-            banana.position = new Posn(math.add(banana.position.getPosition(), math.multiply(banana.velocity, dt)));
-
-            // Check for collisions
-            var collided = false;
-
-            model.buildings.forEach(building => {
-                if (building.containsPoint(banana.position)) {
-                    collided = true;
-                }
-            });
-
-            model.gorillas.forEach(gorilla => {
-                if (gorilla.containsPoint(banana.position)) {
-                    console.log("collided with gorilla " + gorilla.position.getX() + " " + gorilla.position.getY());
-                    gorilla.alive = false;
-                    model.roundOver = true;
-                    collided = true;
-                }
-            });
-
-            if (banana.position.getX() > GAME_WIDTH || banana.position.getX() > GAME_WIDTH < 0) {
-                collided = true;
-            }
-
-            if (collided) {
-                // Trigger explosion at the position the banana was located formerly
-                model.bananas[bi].gorilla.shotsLeft -= 1;
-                model.bananas.splice(bi, 1);
-            }
-        }
-
-        // Launch a banana
-        if (launch) {
-            launch = false;
-            if (model.gorillas[0].shotsLeft > 0) {
-                model.addBanana(playerID, launchSpeed, launchAngle);
-            }
-        }
     }
 
     // Render the game
