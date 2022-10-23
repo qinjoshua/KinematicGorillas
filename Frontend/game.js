@@ -357,6 +357,7 @@ class RenderView {
     }
 
     renderGorilla(gorilla, roundOver) {
+        let id = gorilla.playerID;
         let x = gorilla.position.getPixelX();
         let y = gorilla.position.getPixelY();
         let orientation = gorilla.orientation;
@@ -366,12 +367,12 @@ class RenderView {
         // Gorilla states
         if (roundOver) {
             if (gorilla.alive) {
-                this.renderGorillaWin(x, y, orientation, width, height);
+                this.renderGorillaWin(x, y, orientation, width, height, id);
             } else {
                 this.renderExplosion(x, y);
             }
         } else {
-            this.renderGorillaBreathing(x, y, orientation, width, height);
+            this.renderGorillaBreathing(x, y, orientation, width, height, id);
         }
 
         // consider banana
@@ -387,7 +388,7 @@ class RenderView {
         // }
     }
 
-    renderGorillaImage(x, y, orientation, width, height, upLeft, downLeft, upRight, downRight) {
+    renderGorillaImage(x, y, orientation, width, height, upLeft, downLeft, upRight, downRight, id) {
 
         if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
@@ -411,25 +412,30 @@ class RenderView {
                 }
                 break;
         }
+
+        this.context.fillStyle = "#000000";
+        this.context.font = "12px Verdana";
+        this.context.fillText(id, x + CANVAS_WIDTH * 0.01, y);
+
         this.tick = this.tick + 1;
     }
 
-    renderGorillaBreathing(x, y, orientation, width, height) {
+    renderGorillaBreathing(x, y, orientation, width, height, id) {
         var imgBreatheUpGorilla = document.getElementById("bu-img");
         var imgBreatheDownGorilla = document.getElementById("bd-img");
         var imgBreatheUpGorillaLeft = document.getElementById("bu-img-l");
         var imgBreatheDownGorillaLeft = document.getElementById("bd-img-l");
 
-        this.renderGorillaImage(x, y, orientation, width, height, imgBreatheUpGorillaLeft, imgBreatheDownGorillaLeft, imgBreatheUpGorilla, imgBreatheDownGorilla);
+        this.renderGorillaImage(x, y, orientation, width, height, imgBreatheUpGorillaLeft, imgBreatheDownGorillaLeft, imgBreatheUpGorilla, imgBreatheDownGorilla, id);
     }
 
-    renderGorillaWin(x, y, orientation, width, height) {
+    renderGorillaWin(x, y, orientation, width, height, id) {
         var imgWinUpGorilla = document.getElementById("win1-img");
         var imgWinDownGorilla = document.getElementById("win2-img");
         var imgWinUpGorillaLeft = document.getElementById("win1-img-l");
         var imgWinDownGorillaLeft = document.getElementById("win2-img-l");
 
-        this.renderGorillaImage(x, y, orientation, width, height, imgWinUpGorillaLeft, imgWinDownGorillaLeft, imgWinUpGorilla, imgWinDownGorilla);
+        this.renderGorillaImage(x, y, orientation, width, height, imgWinUpGorillaLeft, imgWinDownGorillaLeft, imgWinUpGorilla, imgWinDownGorilla, id);
     }
 
     renderGorillaBanana(x, y, withBanana, orientation, width, height) {
