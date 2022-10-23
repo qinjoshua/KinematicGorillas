@@ -11,8 +11,9 @@ let MAX_SHOTS = 3;
 
 var GRAVITY = math.matrix([[0], [-9.8]]);
 
-var canvasWidth;
-var canvasHeight;
+var canvas = document.getElementById("viewport");
+var canvasWidth = canvas.width;
+var canvasHeight = canvas.height;
 
 var launchAngle;
 var launchSpeed;
@@ -301,21 +302,21 @@ class RenderView {
 
         let x = building.position.getPixelX();
         let y = building.position.getPixelY();
-        let width = metersToPixels(building.width, canvas.width);
+        let width = metersToPixels(building.width, canvasWidth);
         let height = metersToPixels(building.height);
         let window = building.window;
 
         var imgWindow = document.getElementById(window);
 
 
-        this.context.drawImage(imgWindow, x, y, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
+        this.context.drawImage(imgWindow, x, y, 0.04 * canvasWidth, COLUMN_HEIGHT_WIDTH_FRACTION * canvasWidth);
 
-        var columns = Math.ceil(width / (0.04 * canvas.width));
-        var rows = Math.ceil(height / (COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width));
+        var columns = Math.ceil(width / (0.04 * canvasWidth));
+        var rows = Math.ceil(height / (COLUMN_HEIGHT_WIDTH_FRACTION * canvasWidth));
 
         for (let row = 0; row < rows; row++) {
             for (let column = 0; column < columns; column++) {
-                this.context.drawImage(imgWindow, x + column * 0.04 * canvas.width, y + row * COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
+                this.context.drawImage(imgWindow, x + column * 0.04 * canvasWidth, y + row * COLUMN_HEIGHT_WIDTH_FRACTION * canvasWidth, 0.04 * canvasWidth, COLUMN_HEIGHT_WIDTH_FRACTION * canvasWidth);
             }
         }
     }
@@ -325,31 +326,31 @@ class RenderView {
 
         if (this.tick % 48 >= 0 && this.tick % 48 < 8) {
             var banana = document.getElementById("banana1-img");
-            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(banana, x, y, 0.02 * canvasWidth, 0.05 * canvasHeight);
         }
         else if (this.tick % 48 >= 8 && this.tick % 48 < 16) {
             var banana = document.getElementById("banana2-img");
-            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(banana, x, y, 0.02 * canvasWidth, 0.05 * canvasHeight);
 
         }
         else if (this.tick % 48 >= 16 && this.tick % 48 < 24) {
             var banana = document.getElementById("banana3-img");
-            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(banana, x, y, 0.02 * canvasWidth, 0.05 * canvasHeight);
 
         }
         else if (this.tick % 48 >= 24 && this.tick % 48 < 32) {
             var banana = document.getElementById("banana4-img");
-            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(banana, x, y, 0.02 * canvasWidth, 0.05 * canvasHeight);
 
         }
         else if (this.tick % 48 >= 32 && this.tick % 48 < 40) {
             var banana = document.getElementById("banana5-img");
-            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(banana, x, y, 0.02 * canvasWidth, 0.05 * canvasHeight);
 
         }
         else {
             var banana = document.getElementById("banana6-img");
-            this.context.drawImage(banana, x, y, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(banana, x, y, 0.02 * canvasWidth, 0.05 * canvasHeight);
 
         }
     }
@@ -390,7 +391,6 @@ class RenderView {
         var imgBreatheDownGorilla = document.getElementById("bd-img");
         var imgBreatheUpGorillaLeft = document.getElementById("bu-img-l");
         var imgBreatheDownGorillaLeft = document.getElementById("bd-img-l");
-        var canvas = document.getElementById("viewport");
 
         if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
@@ -423,7 +423,6 @@ class RenderView {
         var imgWinDownGorilla = document.getElementById("win2-img");
         var imgWinUpGorillaLeft = document.getElementById("win1-img-l");
         var imgWinDownGorillaLeft = document.getElementById("win2-img-l");
-        var canvas = document.getElementById("viewport");
 
         if (this.tick % 30 === 0) {
             this.breatheUp = !this.breatheUp;
@@ -455,7 +454,6 @@ class RenderView {
         var imgWithoutBanana = document.getElementById("win1-img");
         var imgWithBananaLeft = document.getElementById("wb-img-l");
         var imgWithoutBananaLeft = document.getElementById("win1-img-l");
-        var canvas = document.getElementById("viewport");
 
         switch (orientation) {
             case Orientation.LEFT:
@@ -490,26 +488,26 @@ class RenderView {
 
         if (this.tick % 80 >= 0 && this.tick % 80 < 16) {
             var explode = document.getElementById("explosion1-img");
-            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+            this.context.drawImage(explode, x, y, 0.075 * canvasWidth, 0.15 * canvasHeight);
         }
         else if (this.tick % 16 >= 8 && this.tick % 80 < 32) {
             var explode = document.getElementById("explosion2-img");
-            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+            this.context.drawImage(explode, x, y, 0.075 * canvasWidth, 0.15 * canvasHeight);
 
         }
         else if (this.tick % 80 >= 32 && this.tick % 80 < 48) {
             var explode = document.getElementById("explosion3-img");
-            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+            this.context.drawImage(explode, x, y, 0.075 * canvasWidth, 0.15 * canvasHeight);
 
         }
         else if (this.tick % 80 >= 48 && this.tick % 80 < 64) {
             var explode = document.getElementById("explosion4-img");
-            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+            this.context.drawImage(explode, x, y, 0.075 * canvasWidth, 0.15 * canvasHeight);
 
         }
         else {
             var explode = document.getElementById("explosion5-img");
-            this.context.drawImage(explode, x, y, 0.075 * canvas.width, 0.15 * canvas.height);
+            this.context.drawImage(explode, x, y, 0.075 * canvasWidth, 0.15 * canvasHeight);
 
         }
 
@@ -539,13 +537,13 @@ class RenderView {
     renderBananaAttempts(shotsLeft) {
         var canvas = document.getElementById("viewport");
         if (shotsLeft >= 1) {
-            this.context.drawImage(document.getElementById("banana1-img"), 60, 60, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(document.getElementById("banana1-img"), 60, 60, 0.02 * canvasWidth, 0.05 * canvasHeight);
         }
         if (shotsLeft >= 2) {
-            this.context.drawImage(document.getElementById("banana1-img"), 80, 60, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(document.getElementById("banana1-img"), 80, 60, 0.02 * canvasWidth, 0.05 * canvasHeight);
         }
         if (shotsLeft === 3) {
-            this.context.drawImage(document.getElementById("banana1-img"), 100, 60, 0.02 * canvas.width, 0.05 * canvas.height);
+            this.context.drawImage(document.getElementById("banana1-img"), 100, 60, 0.02 * canvasWidth, 0.05 * canvasHeight);
         }
     }
 }
@@ -667,10 +665,10 @@ window.onload = function () {
 
         // Draw background and a border
         context.fillStyle = "#67d8da";
-        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillRect(0, 0, canvasWidth, canvasHeight);
         context.fillStyle = "#67d8da";
-        context.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
-        context.drawImage(imgBackground, 0, canvas.height - (canvas.width * (imgBackground.height / imgBackground.width)), canvas.width, canvas.width * (imgBackground.height / imgBackground.width));
+        context.fillRect(1, 1, canvasWidth - 2, canvasHeight - 2);
+        context.drawImage(imgBackground, 0, canvasHeight - (canvasWidth * (imgBackground.height / imgBackground.width)), canvasWidth, canvasWidth * (imgBackground.height / imgBackground.width));
 
         // Display fps - for debugging purposes
         // context.fillStyle = "#ffffff";
@@ -693,10 +691,10 @@ window.onload = function () {
         if (measuringRuler.drawRuler) {
             console.log(measuringRuler.startPos.toString());
             view.renderMeasuringRuler(measuringRuler.startPos, measuringRuler.endPos);
-            view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvas.width);
+            view.renderCoordinates(measuringRuler.startPos, measuringRuler.endPos, canvasWidth);
         }
 
-        view.renderPlayerID(canvas.width, canvas.height);
+        view.renderPlayerID(canvasWidth, canvasHeight);
 
         view.renderBananaAttempts(model.gorillas[0].shotsLeft);
     }
@@ -704,7 +702,7 @@ window.onload = function () {
     canvas.onmousedown = function (e) {
         measuringRuler.drawRuler = false;
         measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
     }
 
     canvas.onmouseup = function (e) {
@@ -713,7 +711,7 @@ window.onload = function () {
         measuringRuler.drawRuler = true;
         //}
         //var totalY = Math.abs(endY - startY);
-        document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvas.width) + "m.";
+        document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvasWidth) + "m.";
         //context.stroke();
         //console.log("X = " + totalX + " Y = " + totalY);
         context.beginPath();
