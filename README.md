@@ -1,27 +1,9 @@
-# KinematicGorillas
-Team members: Hadeel, Nivashini, Joshua, and Adam
-function drawBuildingsFrame() {
-        let sum = 0;
-        //let buildings = []
+# Gorillamatics
+Adam Belfki • Hadeel Farhan • Joshua Qin • Nivashini Suresh
 
-        while (sum < canvas.width) {
-            // let building = new Object()
-            var x = Math.round(Math.random() * (4 - 2) + 2) * 0.05;
-            var y = Math.round(Math.random() * (8 - 3) + 3) * 0.1;
-            // windowStyle = "oval";
-            var randomColor = getRandomColor();
+An online multiplayer game designed to be used in classroom settings, in order to teach kinematics. Made for [HackHarvard 2022](https://devpost.com/software/gorilla-kinematics).
 
-            // buildings.push(building)
-            context.fillStyle = randomColor;
-            context.fillRect(sum, y * canvas.height, x * canvas.width, (canvas.height - y * canvas.height));
+![Gorillamatics Logo](./Frontend/images/gorillamatics-logo-01.png)
 
-            sum = sum + (x * canvas.width);
-        }
+The goal of our project was to create an educational entertainment game that allows students to better engage in qualitative subjects. We wanted to provide a tool for instructors for both in-classroom and remote education and provide a way to make education more accessible for students attending remotely. Specifically, we focused on introductory high school physics, one of the most challenging subjects to tackle. Similar to Kahoot, teachers can setup a classroom or lobby for students to join in from their devices. Students can join in either as individuals, or as a team. Once a competition begins, students use virtual tape measures to find distances in their surroundings, determining how far their opponent is and the size of obstacles that they need to overcome. Based on these parameters, they can then try out an appropriate angle and calculate an initial velocity to fire their projectiles. Although there is no timer, students are incentivized to work quickly in order to fire off their projectiles before their opponents. Students have a limited number of shots as well, incentivizing them to double-check their work wisely.
 
-        //for (let i = 0; i < buildings.length; i++) {
-        //    let building = buildings[i]
-        //    context.fillStyle = building.buildColor
-        //    context.fillRect(0, canvas.height, building.x * canvas.width, building.y * canvas.height)
-        //}
-
-    }
