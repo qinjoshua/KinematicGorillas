@@ -3,7 +3,7 @@ Adam Belfki • Hadeel Farhan • Joshua Qin • Nivashini Suresh
 
 An online multiplayer game designed to be used in classroom settings, in order to teach kinematics. Made for [HackHarvard 2022](https://devpost.com/software/gorilla-kinematics).
 
-![Gorillamatics Logo](./Frontend/images/gorillamatics-logo-01.png)
+![Gorillamatics Logo](./Frontend/images/gorillamatics-logo-02.png)
 
 ## How to run it
 
