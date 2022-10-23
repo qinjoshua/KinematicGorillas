@@ -90,6 +90,7 @@ class Gorilla {
         this.height = height;
         this.playerID = playerID;
         this.shotsLeft = shots;
+        // state: alive, banana, shooting, etc, won
         this.alive = true;
     }
 
@@ -283,6 +284,9 @@ class KinematicGorillaModel {
     }
 }
 
+/**
+ * 
+ */
 class RenderView {
     constructor(context) {
         this.context = context
@@ -291,9 +295,7 @@ class RenderView {
         this.roundOver = false;
     }
 
-    // id of window should be used
     renderBuilding(x, y, width, height, window) {
-        //put window function here
         var canvas = document.getElementById("viewport");
         var imgWindow = document.getElementById(window);
         var COLUMN_HEIGHT_WIDTH_FRACTION = 0.04;
@@ -308,8 +310,6 @@ class RenderView {
                 this.context.drawImage(imgWindow, x + column * 0.04 * canvas.width, y + row * COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width, 0.04 * canvas.width, COLUMN_HEIGHT_WIDTH_FRACTION * canvas.width);
             }
         }
-        // this.context.fillStyle = "#000000";
-        // this.context.fillRect(x, y, width, height);
     }
 
     renderBuildings(buildings) {
@@ -318,7 +318,6 @@ class RenderView {
             this.renderBuilding(building.position.getX(), building.position.getY(), building.width, building.height, building.window);
         }
     }
-
 
     renderBanana(x, y) {
         var canvas = document.getElementById("viewport");
@@ -354,32 +353,35 @@ class RenderView {
         }
     }
 
-    renderGorilla(x, y, banana, orientation, width, height) {
-        if (banana) {
-            // with certain number of ticks
-            this.renderGorillaBanana(x, y, true, orientation, width, height);
-            // with certain number of ticks
-            this.renderGorillaBanana(x, y, false, orientation, width, height);
-        }
-        else {
+    renderGorilla(gorilla, roundOver) {
+        let x = gorilla.position.getPixelX();
+        let y = gorilla.position.getPixelY();
+        let orientation = gorilla.orientation;
+        let width = metersToPixels(gorilla.width);
+        let height = metersToPixels(gorilla.height);
+
+        // Gorilla states
+        if (roundOver) {
+            if (gorilla.alive) {
+                this.renderGorillaWin(x, y, orientation, width, height);
+            } else {
+                this.renderExplosion(x, y);
+            }
+        } else {
             this.renderGorillaBreathing(x, y, orientation, width, height);
         }
-    }
 
+        // consider banana
 
-    flipHorizontally(img, x, y, width, height) {
-        // move to x + img's width
-        this.context.translate(x, y);
-
-        // scaleX by -1; this "trick" flips horizontally
-        this.context.scale(-1, 1);
-
-        // draw the img
-        // no need for x,y since we've already translated
-        this.context.drawImage(img, 0, 0, width, height);
-
-        // always clean up -- reset transformations to default
-        this.context.setTransform(1, 0, 0, 1, 0, 0);
+        // if (banana) {
+        //     // with certain number of ticks
+        //     this.renderGorillaBanana(x, y, true, orientation, width, height);
+        //     // with certain number of ticks
+        //     this.renderGorillaBanana(x, y, false, orientation, width, height);
+        // }
+        // else {
+        //     this.renderGorillaBreathing(x, y, orientation, width, height);
+        // }
     }
 
     renderGorillaBreathing(x, y, orientation, width, height) {
@@ -575,7 +577,7 @@ function getRndInteger(min, max) {
 function distanceBetweenTwoPoints(pos1, pos2) {
     let x = pos2.getX() - pos1.getX();
     let y = pos2.getY() - pos1.getY();
-    
+
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 }
 
@@ -669,27 +671,14 @@ window.onload = function () {
         context.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
         context.drawImage(imgBackground, 0, canvas.height - (canvas.width * (imgBackground.height / imgBackground.width)), canvas.width, canvas.width * (imgBackground.height / imgBackground.width));
 
-        // Display fps
-        context.fillStyle = "#ffffff";
-        context.font = "12px Verdana";
+        // Display fps - for debugging purposes
+        // context.fillStyle = "#ffffff";
+        // context.font = "12px Verdana";
         //context.fillText("Fps: " + fps, 13, 70);
 
         for (var ii = 0; ii < model.gorillas.length; ii++) {
-            if (model.roundOver) {
-                if (model.gorillas[ii].alive) {
-                    view.renderGorillaWin(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
-                } else {
-                    view.renderExplosion(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY());
-                }
-            } else {
-                view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
-            }
+            view.renderGorilla(model.gorillas[ii], model.roundOver);
         }
-
-        /*for (var ii = 0; ii < model.gorillas.length; ii++) {
-            // Different states of Gorilla
-            view.renderGorillaBreathing(model.gorillas[ii].position.getPixelX(), model.gorillas[ii].position.getPixelY(), model.gorillas[ii].orientation, metersToPixels(model.gorillas[ii].width), metersToPixels(model.gorillas[ii].height));
-        }*/
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
             view.renderBuilding(model.buildings[ii].position.getPixelX(), model.buildings[ii].position.getPixelY(),
@@ -712,16 +701,16 @@ window.onload = function () {
         view.renderBananaAttempts(model.gorillas[0].shotsLeft);
     }
 
-    canvas.onmousedown = function(e) {
+    canvas.onmousedown = function (e) {
         measuringRuler.drawRuler = false;
         measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
-    
-    canvas.onmouseup = function(e) {
+
+    canvas.onmouseup = function (e) {
         measuringRuler.endPos = new Posn(math.matrix([[e.x], [e.y]]));
         //if (measuringRuler.startPos !== null && measuringRuler.endPos !== null) {
-            measuringRuler.drawRuler = true;
+        measuringRuler.drawRuler = true;
         //}
         //var totalY = Math.abs(endY - startY);
         document.getElementById("distance_block").innerHTML = "Distance calculated: " + measuringRuler.getHorizontalDistance(canvas.width) + "m.";
