@@ -452,7 +452,7 @@ class RenderView {
     }
 
     renderCoordinates(startPos, endPos, width) {
-        this.context.font = "bold 60px Georgia";
+        this.context.font = "bold 30px Georgia";
         this.context.fillStyle = "black";
         this.context.fillText("(" + Math.round(startPos.getX() * GAME_WIDTH / width) + ", " + Math.round(startPos.getY() * GAME_WIDTH / width) + ")", startPos.getX() - 50, startPos.getY(), 50);
         this.context.fillText("(" + Math.round(endPos.getX() * GAME_WIDTH / width) + ", " + Math.round(endPos.getY() * GAME_WIDTH / width) + ")", endPos.getX(), endPos.getY(), 50);
