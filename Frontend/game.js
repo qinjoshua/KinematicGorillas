@@ -570,7 +570,7 @@ window.onload = function () {
     // Get the canvas and context
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
-    var model = new KinematicGorillaModel(["Adam", "Joshua"], 0);
+    var model = new KinematicGorillaModel([localStorage.getItem("playerID"), "CPU"], 0);
     var measuringRuler = new MeasuringRuler();
 
     function resize() {
