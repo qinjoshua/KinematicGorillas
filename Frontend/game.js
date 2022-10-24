@@ -1,15 +1,24 @@
-let GAME_WIDTH = 200;
-let GAME_HEIGHT = 100;
+const GAME_WIDTH = 200;
+const GAME_HEIGHT = 100;
 
-let GORILLA_WIDTH_FACTOR = 0.05;
-let GORILLA_HEIGHT_FACTOR = 0.1;
+const GORILLA_WIDTH_RATIO = 0.05;
+const GORILLA_HEIGHT_RATIO = 0.1;
 
 let LEFT_PLAYER_OPEN_POS = [];
 let RIGHT_PLAYER_OPEN_POS = [];
 
-let MAX_SHOTS = 3;
+const MAX_BUILDING_WIDTH = 5;
+const MIN_BUILDING_WIDTH = 3;
+const MAX_BUILDING_HEIGHT = 4;
+const MIN_BUILDING_HEIGHT = 10;
 
-var GRAVITY = math.matrix([[0], [-9.8]]);
+const WINDOW_SIDE_LENGTH_RATIO = 0.04;
+
+const MAX_SHOTS = 3;
+
+const GRAVITY = math.matrix([[0], [-9.8]]);
+
+const COLUMN_HEIGHT_WIDTH_FRACTION = 0.04;
 
 var canvas = document.getElementById("viewport");
 var CANVAS_WIDTH = canvas.width;
@@ -145,34 +154,40 @@ class KinematicGorillaModel {
         this.launchBanana(this.currentPlayer);
     }
 
-    // Randomly generates a skyline of buildings of different heights and widths
+    /**
+     * Randomly generates a skyline of buildings of different heights and widths
+     * @returns 
+     */
     createSkyline() {
-        LEFT_PLAYER_OPEN_POS = [];
-        RIGHT_PLAYER_OPEN_POS = [];
+        const windowSideLength = GAME_WIDTH * WINDOW_SIDE_LENGTH_RATIO;
         var widthCovered = 0;
         var buildings = [];
 
-        while (widthCovered < GAME_WIDTH) {
-            var x = getRndInteger(2, 4) * 0.05;
-            var y = getRndInteger(3, 8) * 0.1;
+        LEFT_PLAYER_OPEN_POS = [];
+        RIGHT_PLAYER_OPEN_POS = [];
 
-            let buildingOrigin = new Posn(math.matrix([[widthCovered], [y * GAME_HEIGHT]]));
+        while (widthCovered < GAME_WIDTH) {
+            var x = getRndInteger(3, 5);
+            var width = x * windowSideLength;
+
+            var y = getRndInteger(4, 10);
+            var height = y * windowSideLength;
+
+            let buildingOrigin = new Posn(math.matrix([[widthCovered], [height]]));
 
             var leftThreshold = widthCovered < (GAME_WIDTH / 2 * 0.85);
             var rightThreshold = widthCovered > (GAME_WIDTH / 2 + (GAME_WIDTH / 2 * 0.15));
 
-            // Creating reference points on the building for the gorillas to be placed on
             if (leftThreshold) {
                 LEFT_PLAYER_OPEN_POS.push(buildingOrigin);
-            }
-            else if (rightThreshold && (widthCovered + x * GAME_WIDTH <= GAME_WIDTH)) {
-                RIGHT_PLAYER_OPEN_POS.push(new Posn(math.matrix([[buildingOrigin.getX() + x * GAME_WIDTH], [buildingOrigin.getY()]])));
+            } else if (rightThreshold && (widthCovered + width <= GAME_WIDTH)) {
+                RIGHT_PLAYER_OPEN_POS.push(new Posn(math.matrix([[buildingOrigin.getX() + width], [buildingOrigin.getY()]])));
             }
 
-            var building = new Building(x * GAME_WIDTH, y * GAME_HEIGHT, buildingOrigin);
+            var building = new Building(width, height, buildingOrigin);
             buildings.push(building);
 
-            widthCovered = widthCovered + (x * GAME_WIDTH);
+            widthCovered += width;
         }
 
         return buildings;
@@ -185,8 +200,8 @@ class KinematicGorillaModel {
         for (var ii = 0; ii < playerIDs.length; ii++) {
             var position;
             var orientation;
-            var width = GAME_WIDTH * GORILLA_WIDTH_FACTOR;
-            var height = GAME_HEIGHT * GORILLA_HEIGHT_FACTOR;
+            var width = GAME_WIDTH * GORILLA_WIDTH_RATIO;
+            var height = GAME_HEIGHT * GORILLA_HEIGHT_RATIO;
 
             switch (ii % 2) {
                 case 0:
@@ -298,7 +313,6 @@ class RenderView {
     }
 
     renderBuilding(building) {
-        var COLUMN_HEIGHT_WIDTH_FRACTION = 0.04;
 
         let x = building.position.getPixelX();
         let y = building.position.getPixelY();
@@ -308,15 +322,16 @@ class RenderView {
 
         var imgWindow = document.getElementById(window);
 
+        const sideRatio = WINDOW_SIDE_LENGTH_RATIO;
 
-        this.context.drawImage(imgWindow, x, y, 0.04 * CANVAS_WIDTH, COLUMN_HEIGHT_WIDTH_FRACTION * CANVAS_WIDTH);
+        this.context.drawImage(imgWindow, x, y, sideRatio * CANVAS_WIDTH, sideRatio * CANVAS_WIDTH);
 
-        var columns = Math.ceil(width / (0.04 * CANVAS_WIDTH));
-        var rows = Math.ceil(height / (COLUMN_HEIGHT_WIDTH_FRACTION * CANVAS_WIDTH));
+        var columns = Math.ceil(width / (sideRatio * CANVAS_WIDTH));
+        var rows = Math.ceil(height / (sideRatio * CANVAS_WIDTH));
 
         for (let row = 0; row < rows; row++) {
             for (let column = 0; column < columns; column++) {
-                this.context.drawImage(imgWindow, x + column * 0.04 * CANVAS_WIDTH, y + row * COLUMN_HEIGHT_WIDTH_FRACTION * CANVAS_WIDTH, 0.04 * CANVAS_WIDTH, COLUMN_HEIGHT_WIDTH_FRACTION * CANVAS_WIDTH);
+                this.context.drawImage(imgWindow, x + column * sideRatio * CANVAS_WIDTH, y + row * sideRatio * CANVAS_WIDTH, sideRatio * CANVAS_WIDTH, sideRatio * CANVAS_WIDTH);
             }
         }
     }
@@ -555,6 +570,12 @@ class MeasuringRuler {
     }
 }
 
+/**
+ * Generates a random integer between min and max (included)
+ * @param {Number} min 
+ * @param {Number} max 
+ * @returns Random integer
+ */
 function getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
