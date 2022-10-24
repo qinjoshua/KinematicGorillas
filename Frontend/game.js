@@ -690,7 +690,7 @@ window.onload = function () {
         measuringRuler.drawRuler = false;
         measuringRuler.startPos = new Posn(math.matrix([[e.x], [e.y]]));
         context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    }
+    };
 
     canvas.onmouseup = function (e) {
         measuringRuler.endPos = new Posn(math.matrix([[e.x], [e.y]]));
@@ -702,7 +702,15 @@ window.onload = function () {
         //context.stroke();
         //console.log("X = " + totalX + " Y = " + totalY);
         context.beginPath();
-    }
+    };
+
+    document.onkeydown = function (e) {
+        if (e.key === 'c' && measuringRuler.drawRuler) {
+            console.log('Measuring Tape is cleared');
+            measuringRuler.drawRuler = false;
+            context.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
+    };
 
     // Call init to start the game
     init();
