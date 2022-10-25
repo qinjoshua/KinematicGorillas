@@ -309,6 +309,10 @@ class RenderView {
     }
 
     updateTick() {
+        if (this.tick % 30 === 0) {
+            this.breatheUp = !this.breatheUp;
+        }
+
         this.tick = this.tick + 1;
     }
 
@@ -404,11 +408,6 @@ class RenderView {
     }
 
     renderGorillaImage(x, y, orientation, width, height, upLeft, downLeft, upRight, downRight, id) {
-
-        if (this.tick % 30 === 0) {
-            this.breatheUp = !this.breatheUp;
-        }
-
         switch (orientation) {
             case Orientation.LEFT:
                 if (this.breatheUp) {
@@ -431,8 +430,6 @@ class RenderView {
         this.context.fillStyle = "#000000";
         this.context.font = "12px Verdana";
         this.context.fillText(id, x + CANVAS_WIDTH * 0.01, y);
-
-        this.tick = this.tick + 1;
     }
 
     renderGorillaBreathing(x, y, orientation, width, height, id) {
@@ -685,6 +682,7 @@ window.onload = function () {
         for (var ii = 0; ii < model.gorillas.length; ii++) {
             view.renderGorilla(model.gorillas[ii], model.roundOver);
         }
+        view.updateTick();
 
         for (var ii = 0; ii < model.buildings.length; ii++) {
             view.renderBuilding(model.buildings[ii]);
@@ -701,10 +699,7 @@ window.onload = function () {
         }
 
         view.renderPlayerID(CANVAS_WIDTH, CANVAS_HEIGHT);
-
         view.renderBananaAttempts(model.gorillas[0].shotsLeft);
-
-        // view.updateTick();
     }
 
     canvas.onmousedown = function (e) {
