@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
     <head>
         <title>Gorillamatics Lobby</title>
@@ -209,13 +209,14 @@ button:hover span {
     <!-- <script src="/socket.io/socket.io.js"></script> -->
     <script>
         // var socket = io();
+
         var nameInput = document.getElementById('name');
 
         // When we receive the socket message to start a game, we redirect to the game page
         socket.on('start game', function(msg) {
             window.location.href = '/game?name=';
         });
-
+        
         // form.addEventListener('submit', function(e) {
         //     fetch("enterLobby", {
         //         method: 'post',

@@ -28,8 +28,21 @@ var launchAngle;
 var launchSpeed;
 var launch = false;
 
+var socket = io();
+
 function metersToPixels(meters) {
     return meters * (CANVAS_WIDTH / GAME_WIDTH);
+}
+
+function getModel() {
+    var model;
+    fetch("/gameState?name=")
+        // Converting received data to JSON
+        .then(response => response.json())
+        .then(json => {
+            model = json;
+    });
+    return model;
 }
 
 class Posn {
@@ -736,6 +749,10 @@ var form = document.getElementById("launch-form");
 function handleForm(event) {
     event.preventDefault();
     if (document.getElementById("angle").value !== "" && document.getElementById("velocity").value !== "") {
+        socket.emit('launch', {
+            launchSpeed: document.getElementById("velocity").value,
+            launchAngle: document.getElementById("angle").value
+        });
 
         launchSpeed = document.getElementById("velocity").value;
         launchAngle = document.getElementById("angle").value;
@@ -746,4 +763,5 @@ function handleForm(event) {
         alert("Please enter an angle and and initial velocity");
     }
 }
+
 form.addEventListener('submit', handleForm);
