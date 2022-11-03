@@ -117,8 +117,8 @@ class Building {
         this.width = width;
         this.height = height;
         this.position = position;
-        var windowRandom = Math.floor(Math.random() * 3);
-        var windowStyle = ["window-1", "window-2", "window-3"];
+        var windowRandom = Math.floor(Math.random() * 5);
+        var windowStyle = ["window-1", "window-2", "window-3", "window-4", "window-5"];
         this.window = windowStyle[windowRandom];
     }
 
