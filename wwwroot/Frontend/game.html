@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Kinematic Gorillas</title>
+    <link rel="stylesheet" type="text/css" href="game.css" />
+</head>
+
+<body>
+    <div id="main">
+        <div id="viewport-container">
+            <canvas id="viewport" width="1250" height="750"></canvas>
+            <!-- RIGHT GORILLA -->
+            <img src="images/right-gorilla/breathe-down.png" style="max-width: 5%; display: none;" id="bd-img">
+            <img src="images/right-gorilla/breathe-up.png" style="max-width: 5%; display: none;" id="bu-img">
+            <img src="images/right-gorilla/gorilla-win-1.png" style="max-width: 5%; display: none;" id="win1-img">
+            <img src="images/right-gorilla/gorilla-win-2.png" style="max-width: 5%; display: none;" id="win2-img">
+            <img src="images/right-gorilla/gorilla-with-banana.png" style="max-width: 5%; display: none;" id="wb-img">
+            <img src="images/banana.png" style="max-width: 5%; display: none;" id="banana-img">
+
+            <!-- LEFT GORILLA -->
+            <img src="images/left-gorilla/breathe-down-left.png" style="max-width: 5%; display: none;" id="bd-img-l">
+            <img src="images/left-gorilla/breathe-up-left.png" style="max-width: 5%; display: none;" id="bu-img-l">
+            <img src="images/left-gorilla/gorilla-win-1-left.png" style="max-width: 5%; display: none;" id="win1-img-l">
+            <img src="images/left-gorilla/gorilla-win-2-left.png" style="max-width: 5%; display: none;" id="win2-img-l">
+            <img src="images/left-gorilla/gorilla-with-banana-left.png" style="max-width: 5%; display: none;"
+                id="wb-img-l">
+
+            <!-- BANANA -->
+            <img src="images/banana-rotate/banana-1.png" style="max-width: 5%; display: none;" id="banana1-img">
+            <img src="images/banana-rotate/banana-2.png" style="max-width: 5%; display: none;" id="banana2-img">
+            <img src="images/banana-rotate/banana-3.png" style="max-width: 5%; display: none;" id="banana3-img">
+            <img src="images/banana-rotate/banana-4.png" style="max-width: 5%; display: none;" id="banana4-img">
+            <img src="images/banana-rotate/banana-5.png" style="max-width: 5%; display: none;" id="banana5-img">
+            <img src="images/banana-rotate/banana-6.png" style="max-width: 5%; display: none;" id="banana6-img">
+
+            <!-- EXPLOSION -->
+            <img src="images/explosion/explosion-1.png" style="max-width: 5%; display: none;" id="explosion1-img">
+            <img src="images/explosion/explosion-2.png" style="max-width: 5%; display: none;" id="explosion2-img">
+            <img src="images/explosion/explosion-3.png" style="max-width: 5%; display: none;" id="explosion3-img">
+            <img src="images/explosion/explosion-4.png" style="max-width: 5%; display: none;" id="explosion4-img">
+            <img src="images/explosion/explosion-5.png" style="max-width: 5%; display: none;" id="explosion5-img">
+
+            <img src="images/banana-left.png" style="max-width: 5%; display: none;" id="banana-img-l">
+            <!-- WINDOW UNIT -->
+            <img src="images/window-unit-1.png" style="max-width: 5%; display: none;" id="window-1">
+            <img src="images/window-unit-2.png" style="max-width: 5%; display: none;" id="window-2">
+            <img src="images/window-unit-3.png" style="max-width: 5%; display: none;" id="window-3">
+
+            <!-- BACKGROUND -->
+            <img src="images/background-test.png" style="max-width: 5%; display: none;" id="background">
+
+        </div>
+        <form id="launch-form">
+            <div class="form-section">
+                <p id="distance_block">Distance Calculated: 0m.</p>
+            </div>
+            <div class="form-section">
+                <label for="angle">Angle (in radians):</label><br>
+                <input type="text" id="angle" name="angle"><br>
+                <label for="velocity">Velocity:</label><br>
+                <input type="text" id="velocity" name="velocity">
+            </div>
+            <div class="form-section">
+                <button id="launch-button" type="submit" value="Submit">Launch</button>
+            </div>
+        </form>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.3.0/math.js"
+    integrity="sha512-KbNw0OskcuIOm8RXUYqG64yNFaZcmafzkaJtZLZ/PBjHOogCKDrBvKZi0pnbfTQ6o5Y/16NmH4mhl6ytjwDkrg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript" src="game.js"></script>
+</html>

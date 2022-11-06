@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gorillamatics Lobby</title>
+    <style>
+      body {
+        background-color: #67d8da;
+        background-image: url("./images/background.jpg");
+        margin: 0;
+        overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+
+      .center-screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 100vh;
+      }
+
+      .shadow {
+        -moz-box-shadow: 0 0 30px 5px #999;
+        -webkit-box-shadow: 0 0 30px 5px #999;
+      }
+
+      #entry-box {
+        padding: 1rem;
+        color: white;
+        background-color: rgba(175, 221, 206, 0.3);
+        backdrop-filter: blur(14px);
+        width: 40rem;
+        height: 20rem;
+      }
+
+      .fancy-input .fancy-input--input {
+        display: block;
+        font-size: 14pt;
+        line-height: 1.5;
+        padding: 15px;
+        outline: none;
+        border: none;
+        pointer-events: auto;
+        box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .fancy-input {
+        transition: 0.5s ease;
+        position: relative;
+        margin-bottom: 50px;
+      }
+      .fancy-input:hover,
+      .fancy-input:focus-within {
+        transform: scale(1.1);
+      }
+      .fancy-input::before,
+      .fancy-input::after {
+        content: "";
+        position: absolute;
+        transition: 0.5s ease;
+        box-sizing: border-box;
+        pointer-events: none;
+        transition: width 0.5s ease-in-out, height 0.5s ease-in-out,
+          border 0s 0.5s ease-in-out;
+        width: 0%;
+        height: 0%;
+      }
+      .fancy-input::before {
+        top: 0;
+        left: 0;
+        border-left: 3px solid transparent;
+        border-top: 3px solid transparent;
+      }
+      .fancy-input::after {
+        bottom: 0;
+        right: 0;
+        border-right: 3px solid transparent;
+        border-bottom: 3px solid transparent;
+      }
+      .fancy-input:hover::before,
+      .fancy-input:focus-within::before,
+      .fancy-input:hover::after,
+      .fancy-input:focus-within::after {
+        width: 100%;
+        height: 100%;
+        transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+      }
+      .fancy-input:hover::before,
+      .fancy-input:focus-within::before {
+        border-left: 3px solid #2c3e50;
+        border-top: 3px solid #2c3e50;
+      }
+      .fancy-input:hover::after,
+      .fancy-input:focus-within::after {
+        border-right: 3px solid #2c3e50;
+        border-bottom: 3px solid #2c3e50;
+      }
+
+      .fancy-input--input {
+        transition: 0.2s ease;
+      }
+      .fancy-input--input::placeholder {
+        visibility: hidden;
+      }
+      .fancy-input--input:valid {
+        color: green;
+      }
+      .fancy-input--input:valid ~ .fancy-input--label,
+      .fancy-input--input:not(.fancy-input--input:placeholder-shown)
+        ~ .fancy-input--label {
+        opacity: 0;
+      }
+      .fancy-input--input:focus:not(.fancy-input--input:valid)
+        ~ .fancy-input--label,
+      .fancy-input--input:hover:not(.fancy-input--input:valid)
+        ~ .fancy-input--label {
+        opacity: 1;
+      }
+      .fancy-input--input:hover ~ .fancy-input--label,
+      .fancy-input--input:focus ~ .fancy-input--label {
+        color: white;
+        font-size: 12px;
+        transform: translateX(-12px) translateY(-40px);
+      }
+
+      .fancy-input--label {
+        opacity: 1;
+        color: #7f8c8d;
+        position: absolute;
+        z-index: 1;
+        top: 20px;
+        left: 15px;
+        transition: 0.5s ease;
+      }
+
+      .dark-button {
+        background-color: rgb(69, 116, 196);
+      }
+
+      .dark-button span {
+        color: white;
+      }
+
+      button {
+        position: relative;
+        outline: none;
+        text-decoration: none;
+        border-radius: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        text-transform: uppercase;
+        height: 60px;
+        width: 210px;
+        opacity: 1;
+        background-color: #ffffff;
+        border: 1px solid rgba(22, 76, 167, 0.6);
+      }
+      button span {
+        color: #164ca7;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.7px;
+      }
+      button:hover {
+        animation: rotate 0.7s ease-in-out both;
+      }
+      button:hover span {
+        animation: storm 0.7s ease-in-out both;
+        animation-delay: 0.06s;
+      }
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg) translate3d(0, 0, 0);
+        }
+        25% {
+          transform: rotate(3deg) translate3d(0, 0, 0);
+        }
+        50% {
+          transform: rotate(-3deg) translate3d(0, 0, 0);
+        }
+        75% {
+          transform: rotate(1deg) translate3d(0, 0, 0);
+        }
+        100% {
+          transform: rotate(0deg) translate3d(0, 0, 0);
+        }
+      }
+      @keyframes storm {
+        0% {
+          transform: translate3d(0, 0, 0) translateZ(0);
+        }
+        25% {
+          transform: translate3d(4px, 0, 0) translateZ(0);
+        }
+        50% {
+          transform: translate3d(-3px, 0, 0) translateZ(0);
+        }
+        75% {
+          transform: translate3d(2px, 0, 0) translateZ(0);
+        }
+        100% {
+          transform: translate3d(0, 0, 0) translateZ(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="center-screen shadow">
+    <div id="logo" class="center-screen">
+      <img
+        src="images/gorillamatics-logo-01.png"
+        alt="Italian Trull"
+        style="max-width: 50%"
+      />
+    </div>
+    <div id="entry-box" class="center-screen">
+      <div>
+        <form action="./game.html" method="post">
+          <div>
+            <div class="fancy-input">
+              <input
+                id="name"
+                class="fancy-input--input"
+                placeholder="Name"
+                autocomplete="off"
+                required
+              />
+              <label class="fancy-input--label" for="name">
+                <span>Enter your name</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <div class="fancy-input">
+              <input
+                id="code"
+                class="fancy-input--input"
+                placeholder="Code"
+                autocomplete="off"
+                required
+              />
+              <label class="fancy-input--label" for="code">
+                <span>Enter a game code</span>
+              </label>
+            </div>
+          </div>
+
+          <div style="padding: 1.5rem;">
+            <button id="launch-game"><span>Join Game</span></button>
+            <br />
+          </div>
+        </form>
+        <hr />
+        <form>
+          <div style="padding: 1.5rem;">
+            <button id="launch-game" class="dark-button"><span>New Game</span></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+  <!-- <script src="/socket.io/socket.io.js"></script> -->
+  <script>
+    // var socket = io();
+
+    var nameInput = document.getElementById("name");
+
+    // When we receive the socket message to start a game, we redirect to the game page
+    socket.on("start game", function (msg) {
+      window.location.href = "/game?name=";
+    });
+
+    // form.addEventListener('submit', function(e) {
+    //     fetch("enterLobby", {
+    //         method: 'post',
+    //         body: {name: nameInput.value},
+    //         headers: {
+    //             'Accept': 'application/json',
+    //             'Content-Type': 'application/json'
+    //         }
+    //     }).then((response) => {
+    //         // socket.emit('game start');
+    //     }).then((res) => {
+    //         if (res.status === 201) {
+    //             console.log("Post successfully created!")
+    //         }
+    //     }).catch((error) => {
+    //         console.log(error)
+    //     })
+    // });
+  </script>
+  <script type="text/javascript" src="./index.js"></script>
+</html>

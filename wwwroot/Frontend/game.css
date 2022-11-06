@@ -1,0 +1,57 @@
+html,
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+}
+
+#viewport-container {
+    flex: 1;
+    margin: 0;
+    background-color: darkgray;
+}
+
+#main {
+    height: 100%;
+    display: flex;
+    flex-flow: column;
+}
+
+#launch-form {
+    padding: 1rem;
+    line-height: 1.5rem;
+}
+
+form {
+    display: flex;
+    flex-direction: row;
+}
+
+.form-section {
+    /* margin: auto; */
+    padding-left: 2%;
+    padding-right: 2%;
+}
+
+#launch-button {
+    padding-top: 2%;
+}
+
+#leftbox {
+    float:left; 
+    background:Red;
+    width:25%;
+    height:280px;
+}
+#middlebox{
+    float:left; 
+    background:Green;
+    width:50%;
+    height:280px;
+}
+#rightbox{
+    float:right;
+    background:blue;
+    width:25%;
+    height:280px;
+}
