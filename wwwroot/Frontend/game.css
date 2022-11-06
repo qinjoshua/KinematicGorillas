@@ -18,8 +18,18 @@ body {
 }
 
 #launch-form {
-    padding: 1rem;
+    padding: 2.2rem;
     line-height: 1.5rem;
+    background-color: #37313B;
+    color: white;
+    font-family: 'Oxanium', cursive;
+    padding-bottom: 4%;
+}
+
+#grass {
+    height: 10%;
+    color: #2F773A;
+    background-color: #2F773A;
 }
 
 form {
@@ -34,24 +44,56 @@ form {
 }
 
 #launch-button {
-    padding-top: 2%;
+    border-radius: 10px;
+    padding: 13%;
+    color: white;
+    background-color: #2F773A;
+    border: none;
+    padding-left: 90%;
+    padding-right: 90%;
+    margin-left: 70%;
+    font-family: 'Oxanium', cursive;
+}
+
+#launch-button:hover {
+    cursor: pointer;
+}
+
+#distance {
+    /* padding-bottom: 10%; */
+    margin-left: 70%;
+    position: absolute;
+    bottom: 2%;
+    font-weight: 500;
+}
+
+#velocity,
+#angle {
+    border-radius: 10px;
+    border: none;
+    padding: 4%;
+    padding-left: 5%;
+    padding-right: 5%;
+    font-family: 'Oxanium', cursive;
 }
 
 #leftbox {
-    float:left; 
-    background:Red;
-    width:25%;
-    height:280px;
+    float: left;
+    background: Red;
+    width: 25%;
+    height: 280px;
 }
-#middlebox{
-    float:left; 
-    background:Green;
-    width:50%;
-    height:280px;
+
+#middlebox {
+    float: left;
+    background: Green;
+    width: 50%;
+    height: 280px;
 }
-#rightbox{
-    float:right;
-    background:blue;
-    width:25%;
-    height:280px;
+
+#rightbox {
+    float: right;
+    background: blue;
+    width: 25%;
+    height: 280px;
 }
