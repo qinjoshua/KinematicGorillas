@@ -4,24 +4,23 @@
         <meta charset="UTF-8">
         <title>Game Lobby</title>
         <link rel="stylesheet" type="text/css" href="lobby.css">
+        <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200;300;500&display=swap" rel="stylesheet">
     </head>
-    </head>
-    <body background="./images/lobby-background.png">
-        <div>
-            <img id="logo" src="./images/logo.png" alt="GorillaMatics Logo">
+    <body>
+        <div class="container">
+            <div id="logo-div">
+                <img id="logo" src="./images/logo.png" alt="GorillaMatics Logo">
+            </div>
+            <div id="session-controls">
+                <p id="code">28320323</p>
+                <button id="lobby-control-button" type="button">START GAME</button>
+                <p>
+                    Players joined: <br>
+                    Joshua <br>
+                    Adam <br>
+                </p>
+            </div>
         </div>
-        <div id="code-box">
-            <p>28320323</p>
-        </div>
-        <div>
-            <p id="empty"></p>
-        </div>
-        <button id="lobby-control-button" type="button"></button>
-        <pre id="players-list">
-            Players joined:
-            Joshua
-            Adam
-        </pre>
     </body>
     <script type="text/javascript" src="lobby.js"></script>
 </html>

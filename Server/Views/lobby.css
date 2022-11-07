@@ -1,8 +1,43 @@
-#code-box {
-    background-color: blue;
-    max-width: 5%;
+html {
+    background: url("./images/lobby-background.png") no-repeat center center fixed;
+    background-size: cover;
+}
+
+body {
+    font-family: 'Oxanium', cursive;
+}
+
+#container {
+    /* margin-top: 5%;
+    margin-left: 8%; */
+    position: fixed;
+}
+
+#code {
+    background-color: #D7EDEA;
+    border-radius: 15px;
+}
+
+#session-controls {
+    float: left;
+    margin-top: 10%;
+    padding-left: 100px;
+}
+
+#logo-div {
+    float: left
 }
 
 #logo {
-    width: 20%;
+    width: 20rem;
+    margin-top: 40%;
+    margin-left: 40%;
+}
+
+#lobby-control-button {
+    color: white;
+    background-color: #384C65;
+    border: none;
+    border-radius: 15px;
+    padding: 15px;
 }
