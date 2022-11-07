@@ -1,43 +1,71 @@
-html {
-    background: url("./images/lobby-background.png") no-repeat center center fixed;
-    background-size: cover;
-}
-
 body {
+    background: url("./images/lobby-background.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
     font-family: 'Oxanium', cursive;
+    font-weight: 300;
 }
 
 #container {
-    /* margin-top: 5%;
-    margin-left: 8%; */
-    position: fixed;
+    display: display;
 }
 
 #code {
     background-color: #D7EDEA;
     border-radius: 15px;
+    margin-bottom: 30px;
+    padding: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 500;
 }
 
-#session-controls {
-    float: left;
-    margin-top: 10%;
-    padding-left: 100px;
+#code-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0%;
+    margin-top: 8%;
+    max-width: 350px;
 }
 
-#logo-div {
-    float: left
+#logo-box {
+    display: flex;
 }
 
 #logo {
-    width: 20rem;
-    margin-top: 40%;
-    margin-left: 40%;
+    flex: 0 1 0%;
+    height: 100px;
+    margin-left: 22%;
+    margin-top: 10%; 
+    margin-right: 50px;
+    height: 350px;
 }
 
-#lobby-control-button {
+#lobby-button {
     color: white;
     background-color: #384C65;
     border: none;
-    border-radius: 15px;
+    border-radius: 20px;
     padding: 15px;
+    padding-left: 40px;
+    padding-right: 40px;
+    font-size: 20px;
+}
+
+#button-box {
+    margin-bottom: 30px;
+}
+
+#players-list {
+    font-size: 20px;
+}
+
+.players-joined {
+    font-weight: 500;
+    font-size: 25px;
+    margin-bottom: 10px;
 }
