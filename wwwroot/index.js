@@ -1,12 +1,12 @@
-import {Lobby} from './game.js';
-import {KinematicGorillaModel} from './game.js';
+var Lobby = require('./lobby.js');
+var KinematicGorillaModel = require('./game.js');
 
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 3000;
 
-const GAME_CODE_LENGTH = 5;
+const GAME_CODE_LENGTH = 6;
 var lobbies = [];
 var games = [];
 
@@ -40,7 +40,7 @@ app.get('/lobby', (req, res) => {
     let code;
 
     while (codeAccepted === false) {
-        code = genCode;
+        code = genCode();
         let isNewCode = true;
 
         lobbies.forEach(lobby => {
@@ -51,12 +51,13 @@ app.get('/lobby', (req, res) => {
     }
 
     lobbies.push(new Lobby(code));
-    res.redirect('./' + code);
+    res.redirect('./lobby/' + code);
 });
 
 // Routing input for the lobby
 app.get('/lobby/:gameCode', (req, res) => {
-    res.sendFile(__dirname + '/game.html');
+    // TODO redirect you to the lobby
+    res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/game', (req, res) => {
