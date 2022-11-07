@@ -1,7 +1,7 @@
 # Gorillamatics
 
 <p align="center">
-<img src="./Frontend/images/gorillamatics-logo-02.png">
+<img src="./Server/Views/images/logo.png">
 </p>
 
 Adam Belfki • Hadeel Farhan • Joshua Qin • Nivashini Suresh
