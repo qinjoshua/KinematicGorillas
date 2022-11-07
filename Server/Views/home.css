@@ -1,0 +1,53 @@
+body {
+    background: url("./images/home-background.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    font-family: 'Oxanium', cursive;
+    font-weight: 300;
+    text-align: center;
+}
+
+.line {
+    /* background-color: #6CBEBF; */
+    color: #6CBEBF;
+    /* height: 5px;
+    width: 30px; */
+}
+
+#join-button,
+#start-button {
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 15px;
+    padding-left: 40px;
+    padding-right: 40px;
+    font-size: 20px;
+    font-family: 'Oxanium', cursive;
+    margin: 10px;
+}
+
+#start-button {
+    background-color: #384C65;
+}
+
+#join-button {
+    background-color: #B05944;
+}
+
+#name,
+#code {
+    font-family: 'Oxanium', cursive;
+    border: none;
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+}
+
+.header {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    font-size: 80px;
+}
