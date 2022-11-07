@@ -17,7 +17,7 @@ if (playerType) {
 }
 gameButton.addEventListener('click', function () {
     if (playerType) {
-        window.location.href="index.html";
+        window.location.href="home.html";
     } else {
         window.location.href="game.html";
     }
