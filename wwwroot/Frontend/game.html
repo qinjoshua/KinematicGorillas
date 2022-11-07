@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Kinematic Gorillas</title>
     <link rel="stylesheet" type="text/css" href="game.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@200;300;500&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -47,22 +48,33 @@
             <img src="images/window-unit-1.png" style="max-width: 5%; display: none;" id="window-1">
             <img src="images/window-unit-2.png" style="max-width: 5%; display: none;" id="window-2">
             <img src="images/window-unit-3.png" style="max-width: 5%; display: none;" id="window-3">
+            <img src="images/window-unit-4.png" style="max-width: 5%; display: none;" id="window-4">
+            <img src="images/window-unit-5.png" style="max-width: 5%; display: none;" id="window-5">
 
             <!-- BACKGROUND -->
             <img src="images/background-test.png" style="max-width: 5%; display: none;" id="background">
 
         </div>
+        <div id="grass">.</div>
         <form id="launch-form">
-            <div class="form-section">
-                <p id="distance_block">Distance Calculated: 0m.</p>
+            <div class="form-section" id="distance">
+                <p id="distance_block">
+                    Distance Measured: 0m.
+                </p>
             </div>
             <div class="form-section">
-                <label for="angle">Angle (in radians):</label><br>
+                <label for="angle">Angle:</label><br>
+            </div>
+            <div class="form-section">
                 <input type="text" id="angle" name="angle"><br>
+            </div>
+            <div class="form-section">
                 <label for="velocity">Velocity:</label><br>
+            </div>
+            <div class="form-section">
                 <input type="text" id="velocity" name="velocity">
             </div>
-            <div class="form-section">
+            <div>
                 <button id="launch-button" type="submit" value="Submit">Launch</button>
             </div>
         </form>
