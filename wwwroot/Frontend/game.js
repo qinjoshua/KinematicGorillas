@@ -343,8 +343,8 @@ class RenderView {
 
         this.context.drawImage(imgWindow, x, y, sideRatio * CANVAS_WIDTH, sideRatio * CANVAS_WIDTH);
 
-        var columns = Math.ceil(width / (sideRatio * CANVAS_WIDTH));
-        var rows = Math.ceil(height / (sideRatio * CANVAS_WIDTH));
+        var columns = width / (sideRatio * CANVAS_WIDTH);
+        var rows = height / (sideRatio * CANVAS_WIDTH);
 
         for (let row = 0; row < rows; row++) {
             for (let column = 0; column < columns; column++) {
