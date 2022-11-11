@@ -1,7 +1,7 @@
 # Gorillamatics
 
 <p align="center">
-<img src="./Frontend/images/gorillamatics-logo-02.png">
+<img src="./Server/Views/images/logo.png" width=200>
 </p>
 
 Adam Belfki • Hadeel Farhan • Joshua Qin • Nivashini Suresh
@@ -10,7 +10,7 @@ An online multiplayer game designed to be used in classroom settings, in order t
 
 ## How to run it
 
-Clone or download the repository and click Frontend/game.html
+Clone or download the repository and click Server/Views/home.html
 
 ## Purpose
 
